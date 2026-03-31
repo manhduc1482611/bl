@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm đường - Bản đồ Học viện Ngân hàng</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/pages/ban-do/tim-duong.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="main-content-wrapper">
+        <div class="container">
+            <h2 class="page-title">
+                TÌM ĐƯỜNG TRONG TRƯỜNG
+            </h2>
+            <div class="search-box-wrapper">
+                <div style="position: relative;">
+                    <input type="text" id="searchInput" placeholder="Nhập tên tòa nhà, phòng học, sân bóng..."
+                        autocomplete="off">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <ul id="searchResults" class="search-results-list"></ul>
+            </div>
+
+            <div class="controls">
+                <select id="start" class="select-box">
+                    <option value="">-- Chọn điểm xuất phát --</option>
+                </select>
+                <i class="fas fa-arrow-right" style="color: #999; margin: 0 10px;"></i>
+                <select id="end" class="select-box">
+                    <option value="">-- Chọn điểm đến --</option>
+                </select>
+                <button id="btnFind" class="btn-find">
+                    <i class="fas fa-search-location"></i> DẪN ĐƯỜNG
+                </button>
+            </div>
+
+            <div id="videoSection" class="video-container" style="display: none;">
+                <h3 class="video-title"><i class="fas fa-video"></i> MÔ PHỎNG THỰC TẾ</h3>
+
+                <div class="video-layout">
+
+                    <div class="video-wrapper">
+                        <video id="guideVideo" class="guide-video" muted playsinline>
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div id="instructionText" class="instruction-overlay">Đi thẳng</div>
+                        <div id="tourPrompt" class="tour-prompt-overlay" style="display: none;">
+                            <h4>ĐÃ ĐẾN NƠI! 📍</h4>
+                            <p>Bạn có muốn xem video tham quan <strong id="tourPromptName"
+                                    style="color:#f39c12"></strong> không?</p>
+                            <div class="tour-prompt-btns">
+                                <button id="btnYesTour" class="btn-tour-yes"><i class="fas fa-play-circle"></i> Có, xem
+                                    ngay</button>
+                                <button onclick="closeTourPrompt()" class="btn-tour-no">Không, cảm ơn</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="speed-controls">
+                        <span>Tốc độ</span>
+                        <button onclick="setSpeed(0.5)">0.5x</button>
+                        <button onclick="setSpeed(1.0)" class="active-speed">1.0x</button>
+                        <button onclick="setSpeed(1.5)">1.5x</button>
+                        <button onclick="setSpeed(2.0)">2.0x</button>
+                        <button onclick="setSpeed(4.0)">4.0x</button>
+                        <button onclick="setSpeed(10.0)">10.0x</button>
+                    </div>
+
+                </div>
+                <p id="videoError" style="color: #d9534f; display: none; margin-top: 10px; font-weight: bold;"></p>
+            </div>
+
+            <div id="map-container" style="position: relative; width: 100%; height: 100%;">
+                <img id="map-svg" src="../../assets/images/pages/ban-do/chung/map3.drawio.png" alt="Bản đồ"
+                    style="width: 100%; height: 100%; object-fit: contain;">
+
+                <canvas id="mapCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="tourModuleModal" class="tour-module-modal" style="display: none;">
+        <div class="tour-module-content">
+            <span class="close-tour-modal" onclick="closeTourModule()">&times;</span>
+
+            <div class="tour-video-box">
+                <video id="tourVideo" controls playsinline>
+                    <source src="" type="video/mp4">
+                    Trình duyệt của bạn không hỗ trợ video.
+                </video>
+            </div>
+
+            <div class="tour-info-box">
+                <span class="tour-badge">KHÁM PHÁ HỌC VIỆN</span>
+                <h2 id="tourTitle">Tên tòa nhà</h2>
+                <p id="tourDesc">Thông tin mô tả chi tiết về tòa nhà sẽ hiện ở đây...</p>
+            </div>
+        </div>
+    </div>
+    <script src="../../js/common.js"></script>
+    <script>
+        loadHeader('../..', 'ban-do');
+        loadFooter('../..');
+    </script>
+
+    <script src="../../js/services/api.js"></script>
+    <script src="../../js/controllers/ban-do/tim-duong/dijkstra.js"></script>
+    <script src="../../js/controllers/ban-do/toa-nha/ve-map.js"></script>
+    <script src="../../js/controllers/ban-do/toa-nha/toa-nha.js"></script>
+    <script>
+        const svgObject = document.getElementById("map-svg");
+
+        // Thêm async vào function để có thể dùng await gọi API
+        svgObject.addEventListener("load", async function () {
+            console.log("✅ HỆ THỐNG SẴN SÀNG!");
+            const svgDoc = svgObject.contentDocument;
+            if (!svgDoc) return;
+
+            // 1. Lấy dữ liệu từ file api.js
+            const mapData = await fetchMapData();
+            const nameToIdMap = {};
+
+            // 2. Tạo từ điển ánh xạ từ Tên tòa nhà -> ID
+            if (mapData && mapData.nodes) {
+                for (const id in mapData.nodes) {
+                    const name = mapData.nodes[id].name;
+                    if (name) {
+                        // Đưa hết về chữ thường để so sánh cho chính xác, loại bỏ khoảng trắng thừa
+                        nameToIdMap[name.trim().toLowerCase()] = id;
+                    }
+                }
+            }
+
+            function extractLocationIdFromText(text) {
+                if (!text) return '';
+                const cleaned = String(text)
+                    .replace(/…/g, '.')
+                    .replace(/[^\d._]+/g, ' ')
+                    .trim();
+                const match = cleaned.match(/(\d+(?:[._]\d+)?)/);
+                return match ? match[1] : '';
+            }
+
+            const elements = svgDoc.querySelectorAll("rect, path, polygon, circle, text, foreignObject, div");
+
+            elements.forEach(el => {
+                el.style.cursor = "pointer";
+                el.addEventListener("click", function (event) {
+                    event.stopPropagation();
+
+                    let target = event.target;
+                    let textFound = target.textContent ? target.textContent.trim() : "";
+                    let searchName = textFound.toLowerCase(); // Chuyển sang chữ thường để tìm kiếm
+
+                    let buildingId = null;
+
+                    // Kiểm tra xem chữ click vào có trùng với tên tòa nhà nào trong API không (Vd: "kí túc xá c1" -> "16")
+                    if (nameToIdMap[searchName]) {
+                        buildingId = nameToIdMap[searchName];
+                    }
+                    // Nếu không tìm thấy tên, dùng lại Regex để tìm số trong nhãn như cũ (Vd: ".....8..." -> "8")
+                    else {
+                        const extractedId = extractLocationIdFromText(textFound);
+                        if (extractedId) {
+                            buildingId = extractedId;
+                        }
+                    }
+
+                    // Nếu xác định được buildingId thì gọi hàm hiển thị ảnh
+                    if (buildingId) {
+                        console.log("-------------------");
+                        console.log(`🎯 Bạn đã click vào khu vực: ${textFound} (ID: ${buildingId})`);
+
+                        // GỌI HÀM HIỂN THỊ ẢNH
+                        showBuildingImages(buildingId);
+                    }
+                });
+            });
+        });
+
+        // Hàm xử lý hiển thị ảnh
+        // Hàm mở Modal và truyền ID vào trang chi tiết
+        function showBuildingImages(num) {
+            const modal = document.getElementById('image-modal');
+            const iframe = document.getElementById('modal-iframe');
+
+            // Gắn link kèm ID tòa nhà (Ví dụ: chi-tiet-tim-duong.html?id=16)
+            iframe.src = `chi-tiet-tim-duong.html?id=${num}`;
+
+            // Hiển thị khung nổi
+            modal.style.display = 'flex';
+        }
+
+        // Hàm đóng Modal
+        function closeModal() {
+            const modal = document.getElementById('image-modal');
+            const iframe = document.getElementById('modal-iframe');
+
+            modal.style.display = 'none';
+            iframe.src = ''; // Xóa src để dừng tải video/ảnh bên trong khi đã đóng
+        }
+    </script>
+    <div id="image-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+
+        <div
+            style="position: relative; width: 90%; max-width: 900px; height: 85%; background: #000; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;">
+
+            <button onclick="closeModal()"
+                style="position: absolute; top: 15px; right: 15px; z-index: 1000; width: 40px; height: 40px; border-radius: 50%; background: #ff4757; color: white; border: none; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center;">&times;</button>
+
+            <iframe id="modal-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+
+        </div>
+    </div>
+</body>
+
+</html>

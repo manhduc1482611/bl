@@ -1,0 +1,97 @@
+/* =========================================
+   FILE: css/ban-do.css
+   MÔ TẢ: CHỌN LOẠI BẢN ĐỒ
+========================================= */
+
+.map-selection-container {
+    text-align: center;
+    padding: 100px 20px;
+    background-color: #f4f7f6; /* Đồng bộ nền xám nhạt từ style.css */
+    min-height: 80vh;
+}
+
+.map-selection-container h2 {
+    font-size: 2.5rem;
+    color: #003478; /* Xanh đậm hệ thống */
+    font-weight: 800; /* Chuẩn font-weight tiêu đề */
+    text-transform: uppercase;
+    margin-bottom: 50px;
+}
+
+/* Bao quanh 2 lựa chọn */
+.options-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+/* Thẻ lựa chọn (Card) */
+.option-card {
+    background: white;
+    width: 300px;
+    padding: 40px;
+    border-radius: 15px; /* Chuẩn bo góc thẻ card */
+    box-shadow: 0 10px 20px rgba(0, 52, 120, 0.08); /* Bóng đổ tone xanh */
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.option-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 52, 120, 0.15);
+    border: 1px solid #f39c12; /* Viền cam hệ thống */
+}
+
+.option-card .icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    color: #003478; /* Icon màu xanh */
+    transition: 0.3s;
+}
+
+.option-card:hover .icon {
+    color: #f39c12; /* Hover ra cam */
+    transform: scale(1.1);
+}
+
+.option-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 800;
+    color: #003478;
+}
+
+.option-card:hover h3 {
+    color: #f39c12;
+}
+
+.option-card p {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.option-card button {
+    padding: 10px 25px;
+    background-color: #003478;
+    color: white;
+    border: none;
+    border-radius: 50px; /* Nút bo tròn */
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.option-card:hover button {
+    background-color: #f39c12;
+    transform: translateY(-2px);
+}

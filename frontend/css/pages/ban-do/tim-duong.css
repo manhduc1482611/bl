@@ -1,0 +1,497 @@
+/* =========================================
+   FILE: css/tim-duong.css
+   MÔ TẢ: Ép sát nội dung lên trên, dàn ngang khu vực tìm kiếm
+========================================= */
+
+.container {
+    width: 100%;
+    max-width: none;
+    padding: 0 15px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* 1. KÉO SÁT LÊN TRÊN CÙNG */
+.main-content-wrapper {
+    text-align: center;
+    padding-top: 5px !important;    
+    padding-bottom: 20px;
+}
+
+.page-title {
+    margin-top: 0 !important;
+    margin-bottom: 10px !important; 
+    font-size: 22px;                
+    color: #003478;
+    text-transform: uppercase;
+    font-weight: 800; /* Chuẩn hệ thống */
+}
+
+/* =========================================
+   2. KHU VỰC CHỌN ĐIỂM (DÀN HÀNG NGANG CHUẨN)
+========================================= */
+.controls {
+    margin: 0 auto 15px auto; 
+    background: white;
+    padding: 15px;       
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    max-width: 900px;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;           
+    flex-wrap: wrap;     
+}
+
+.controls button {
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 5px;
+    background: #003478; /* Chuyển xanh lá thành xanh dương hệ thống */
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: bold;
+    white-space: nowrap; 
+    height: 42px;        
+    transition: 0.3s;
+}
+.controls button:hover { background: #f39c12; }
+
+/* CSS CHO THANH TÌM KIẾM TÙY CHỈNH (CUSTOM DROPDOWN) NẰM NGANG */
+.custom-dropdown {
+    position: relative;
+    flex: 1;             
+    min-width: 200px;    
+    font-family: inherit;
+    margin-bottom: 0;    
+}
+
+.dropdown-header {
+    padding: 10px 15px;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #444;
+    height: 42px;        
+    box-sizing: border-box;
+}
+
+.dropdown-header::after {
+    content: "▼";
+    font-size: 10px;
+    color: #888;
+}
+
+/* Bảng danh sách xổ xuống */
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100%;     
+    width: max-content;  
+    max-width: 450px;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 999;
+    margin: 4px 0 0 0;
+    padding: 0;
+    list-style: none;
+    box-shadow: 0 4px 15px rgba(0,52,120,0.1);
+    text-align: left;    
+}
+
+.dropdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    border-bottom: 1px solid #eee;
+}
+
+.item-name {
+    flex-grow: 1;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    transition: 0.2s;
+}
+
+.item-name:hover {
+    background-color: #f4f7f6;
+    color: #f39c12; /* Cam hệ thống */
+}
+
+.toggle-arrow {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #888;
+    border-left: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    background: #fdfdfd;
+}
+
+.toggle-arrow:hover { background-color: #e9ecef; color: #333; }
+
+.sub-list { list-style: none; margin: 0; padding: 0; background-color: #f8f9fa; }
+.sub-list li { padding: 10px 15px 10px 40px; cursor: pointer; border-bottom: 1px solid #eee; color: #555; font-size: 0.95em; transition: 0.2s;}
+.sub-list li:hover { background-color: #e2e6ea; color: #003478; }
+
+/* =========================================
+   3. KHUNG VIDEO (BỐ CỤC NGANG)
+========================================= */
+.video-container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto 15px auto; 
+    background: #fff;
+    padding: 15px;            
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.video-title {
+    color: #003478;
+    margin: 0 0 10px;         
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.video-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.video-main {
+    flex: 1 1 520px;
+    min-width: 280px;
+}
+
+#map-container {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    margin-top: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f7f9fb;
+    transition: all 0.35s ease;
+}
+
+.video-map-area {
+    position: relative;
+}
+
+.video-map-area .video-container {
+    position: relative;
+    z-index: 1;
+}
+
+.video-map-area.video-playing #map-container {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 340px;
+    height: 210px;
+    min-height: auto;
+    margin-top: 0;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    background: #fff;
+    z-index: 20;
+}
+
+.video-map-area.video-playing .video-container {
+    padding-top: 0;
+}
+
+.video-map-area.video-playing #map-svg,
+.video-map-area.video-playing #mapCanvas {
+    width: 100%;
+    height: 100%;
+    min-height: auto;
+}
+
+#map-svg,
+#mapCanvas {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    display: block;
+}
+
+#mapCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+/* 4. CHỈNH CHIỀU CAO VIDEO & NÚT ĐIỀU KHIỂN */
+.video-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Khoảng cách giữa video và nút điều khiển */
+    min-width: 0; /* Ngăn chặn tràn nội dung */
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 400px; 
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.video-box { position: relative; width: 100%; height: 100%; }
+.guide-video { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+
+.instruction-overlay {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background-color: rgba(0, 52, 120, 0.85); /* Tone xanh đậm */
+    color: #fff; padding: 10px 25px; border-radius: 30px; font-size: 18px;
+    font-weight: bold; text-align: center; z-index: 10; pointer-events: none;  
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.3s ease; 
+}
+
+/* THIẾT KẾ KHU VỰC NÚT TẠM DỪNG / QUAY LẠI */
+.playback-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.btn-control {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    background: #003478;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-control:hover:not(:disabled) {
+    background: #f39c12;
+}
+
+.btn-control:disabled {
+    background: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 5. CỘT TỐC ĐỘ BÊN PHẢI */
+.speed-controls {
+    display: flex; flex-direction: column; gap: 5px; background: #f9f9f9;
+    padding: 10px; border-radius: 4px; border: 1px solid #eee; width: 80px; flex-shrink: 0;
+}
+.speed-controls span { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 3px; text-align: center; }
+.speed-controls button {
+    padding: 6px 0; margin: 0; width: 100%; font-size: 13px; color: #333;
+    background: #fff; transition: all 0.2s; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;
+}
+.speed-controls button:hover { background: #f39c12; color: white; border-color: #f39c12; }
+.speed-controls button.active-speed { background: #003478; color: white; border-color: #003478; }
+
+/* 6. BẢN ĐỒ */
+.map-box { position: relative; display: inline-block; border: 2px solid #003478; width: 100%; }
+.map-box img { width: 100%; display: block; }
+.map-box canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* =========================================
+   GIAO DIỆN THANH TÌM KIẾM ĐỊA ĐIỂM BÊN TRÊN
+========================================= */
+.search-box-wrapper { position: relative; max-width: 500px; margin: 0 auto 30px; }
+
+#searchInput {
+    width: 100%; padding: 14px 20px 14px 45px; border: 2px solid #e9ecef;
+    border-radius: 30px; font-size: 15px; outline: none; transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03); box-sizing: border-box;
+}
+#searchInput:focus { border-color: #003478; box-shadow: 0 4px 20px rgba(0, 52, 120, 0.15); }
+.search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 18px; }
+
+.search-results-list {
+    position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,52,120,0.1); margin-top: 8px;
+    padding: 8px 0; list-style: none; max-height: 250px; overflow-y: auto; z-index: 999; display: none; text-align: left;
+}
+.search-results-list li { padding: 12px 20px; border-bottom: 1px solid #f8f9fa; cursor: pointer; color: #444; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
+.search-results-list li:hover { background: #f4f7f6; color: #003478; padding-left: 25px; }
+.search-results-list li:last-child { border-bottom: none; }
+
+.search-actions { display: flex; gap: 8px; }
+.btn-set-start, .btn-set-end { padding: 6px 12px; font-size: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; }
+.btn-set-start { background: #e9ecef; color: #003478; }
+.btn-set-start:hover { background: #003478; color: #ffffff; }
+.btn-set-end { background: #fdf2e3; color: #f39c12; }
+.btn-set-end:hover { background: #f39c12; color: #ffffff; }
+
+.select-flash { box-shadow: 0 0 15px rgba(243, 156, 18, 0.8) !important; border-color: #f39c12 !important; transition: all 0.5s ease; }
+
+/* =========================================
+   GIAO DIỆN THAM QUAN
+========================================= */
+.tour-prompt-overlay {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95); padding: 25px 35px; border-radius: 12px; text-align: center;
+    box-shadow: 0 15px 40px rgba(0,52,120,0.2); z-index: 20; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.tour-prompt-overlay h4 { margin: 0 0 10px; color: #003478; font-size: 24px; font-weight: 800;}
+.tour-prompt-overlay p { margin: 0 0 20px; color: #444; font-size: 16px; }
+.tour-prompt-btns { display: flex; gap: 10px; justify-content: center; }
+.btn-tour-yes { background: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;}
+.btn-tour-yes:hover { background: #d68910; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3); }
+.btn-tour-no { background: #e9ecef; color: #555; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;}
+.btn-tour-no:hover { background: #ced4da; }
+
+@keyframes popIn {
+    from { transform: translate(-50%, -40%) scale(0.8); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.tour-module-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 15, 40, 0.85); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+}
+.tour-module-content {
+    background: #fff; width: 90%; max-width: 800px; border-radius: 20px; overflow: hidden;
+    display: flex; flex-direction: column; position: relative; animation: slideUp 0.5s ease;
+}
+@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.close-tour-modal {
+    position: absolute; top: 15px; right: 20px; font-size: 32px; color: #fff; cursor: pointer;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.6); z-index: 10; transition: 0.3s;
+}
+.close-tour-modal:hover { color: #f39c12; transform: rotate(90deg); }
+
+.tour-video-box { width: 100%; height: 350px; background: #000; position: relative; }
+.tour-video-box video { width: 100%; height: 100%; object-fit: cover; }
+.tour-info-box { padding: 35px; text-align: left; }
+.tour-badge { background: #fdf2e3; color: #f39c12; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+.tour-info-box h2 { margin: 0 0 15px; color: #003478; font-size: 28px; font-weight: 800;}
+.tour-info-box p { color: #555; line-height: 1.7; font-size: 16px; margin: 0; }
+
+#btnStartJourney { background: #f39c12 !important; color: white; display: none; }
+#btnStartJourney:hover { background: #d68910 !important; }
+/* 1. Lớp bao phủ toàn màn hình (Overlay) */
+.guide-popup {
+    display: none; /* Mặc định ẩn, JS sẽ đổi thành 'flex' khi load trang */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Nền đen mờ 85% */
+    z-index: 999999; /* Đảm bảo luôn đè lên mọi phần tử khác */
+    
+    /* Căn giữa nội dung bên trong */
+    justify-content: center;
+    align-items: center;
+    
+    /* Hiệu ứng mờ dần khi hiện ra */
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 2. Khung chứa nội dung (hình ảnh) */
+.popup-content {
+    position: relative;
+    max-width: 90%; /* Không quá rộng trên màn hình lớn */
+    max-height: 90vh; /* Không quá cao quá màn hình */
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 3. Định dạng hình ảnh hướng dẫn */
+.popup-content img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 12px; /* Bo góc nhẹ cho ảnh đẹp hơn */
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+    border: 3px solid #fff; /* Tạo viền trắng cho ảnh nổi bật */
+}
+
+/* 4. Nút đóng (Dấu X) */
+.popup-close {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background-color: #ff4757; /* Màu đỏ nổi bật */
+    color: white;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+/* Hiệu ứng khi di chuột vào nút đóng */
+.popup-close:hover {
+    background-color: #ff6b81;
+    transform: scale(1.1);
+}
+
+/* Animation hiện hình ảnh */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 5. Tối ưu cho điện thoại */
+@media (max-width: 768px) {
+    .popup-close {
+        top: -15px;
+        right: 0;
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+    
+    .popup-content {
+        max-width: 95%;
+    }
+}

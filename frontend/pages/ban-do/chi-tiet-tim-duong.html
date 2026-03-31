@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">    
+    <title>Chi tiết ảnh khu vực</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background: #f4f7f6; 
+            color: #333; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        #title-box {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            color: #004085;
+            padding: 15px 25px; 
+            border-radius: 8px;
+            border-left: 6px solid #0056b3;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.3rem; 
+            line-height: 1.6;
+            max-width: 80%;
+        }
+        #title-box b {
+            font-size: 1.4rem;
+            color: #0056b3;
+        }
+
+        .slider-container { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 40px;
+        }
+        
+        .slide-img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+            display: none; 
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: opacity 0.3s ease;
+        }
+        
+        .slide-img.active { 
+            display: block; 
+            animation: fadeIn 0.4s ease;
+        }
+
+        .nav-btn { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: rgba(255, 255, 255, 0.85); 
+            color: #0056b3;
+            border: 1px solid #cce5ff; 
+            font-size: 2rem; 
+            padding: 15px 20px; 
+            cursor: pointer; 
+            border-radius: 50px;
+            transition: 0.3s;
+            z-index: 5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .nav-btn:hover { 
+            background: #0056b3; 
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(0,86,179,0.3);
+        }
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        #desc-box {
+            position: absolute;
+            bottom: 50px; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            color: #212529;
+            padding: 15px 30px; 
+            border-radius: 10px;
+            font-size: 1.25rem; 
+            line-height: 1.6; 
+            text-align: center;
+            max-width: 85%;
+            border-bottom: 4px solid #0056b3;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+            display: none; 
+        }
+
+        .dots { 
+            position: absolute; 
+            bottom: 15px; 
+            display: flex; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+            justify-content: center;
+            width: 90%;
+            z-index: 5;
+        }
+        .dot { 
+            width: 14px; 
+            height: 14px; 
+            background: #b8daff;
+            border-radius: 50%; 
+            cursor: pointer; 
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .dot.active, .dot:hover { 
+            background: #0056b3;
+            transform: scale(1.3); 
+        }
+
+        .error-msg { display: none; color: #dc3545; font-size: 1.3rem; font-weight: bold; text-align: center; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div id="title-box">Đang tải dữ liệu...</div>
+    
+    <div class="slider-container" id="slider">
+        <div class="error-msg" id="error-msg">❌ Khu vực này hiện chưa có ảnh.</div>
+    </div>
+
+    <div id="desc-box"></div>
+
+    <button class="nav-btn prev" id="btn-prev">&#10094;</button>
+    <button class="nav-btn next" id="btn-next">&#10095;</button>
+    <div class="dots" id="dots-container"></div>
+
+    <script src="../../js/services/api.js"></script>
+
+    <script>
+    // 1. Hàm gọi API để lấy dữ liệu từ Backend
+    async function hydrateTimDuongMetadata() {
+        try {
+            const response = await fetch('http://localhost:3000/api/map-data'); 
+            const data = await response.json();
+
+            window.IMAGE_METADATA = {};
+            
+            if (data && data.locations && Array.isArray(data.locations)) {
+                data.locations.forEach(item => {
+                    if (item.location_code) {
+                        window.IMAGE_METADATA[item.location_code] = {
+                            building: item.building,
+                            specific_location: item.specific_location,
+                            floor: item.floor,
+                            description: item.description,
+                            photoUrl: item.photoUrl || '' 
+                        };
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu từ API:", error);
+            window.IMAGE_METADATA = null;
+        }
+    }
+
+    // 2. Hàm chính xử lý logic giao diện
+    (async function () {
+        await hydrateTimDuongMetadata();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const originalId = urlParams.get('id'); 
+        
+        let baseId = originalId;
+        if (baseId && baseId.includes('.')) {
+            baseId = baseId.split('.')[0]; 
+        }
+
+        const maxImages = 20;
+        const imageDataList = []; 
+        
+        if (baseId) {
+            for (let i = 1; i <= maxImages; i++) {
+                const key = `${baseId}_${i}`; // Đây chính là location_code tương ứng
+                // Đường dẫn ảnh theo quy tắc: location_code.jpg trong thư mục tim-duong
+                const path = `../../assets/images/pages/ban-do/tim-duong/${key}.jpg`;
+                
+                imageDataList.push({ key, path });
+            }
+        }
+
+        let currentIndex = 0;
+        const slider = document.getElementById('slider');
+        const dotsContainer = document.getElementById('dots-container');
+        const titleBox = document.getElementById('title-box');
+        const descBox = document.getElementById('desc-box');
+
+        let tempImages = []; 
+        let validImages = []; 
+        let dots = [];
+        let imagesLoadedCount = 0;
+        
+        if (imageDataList.length > 0) {
+            imageDataList.forEach((item, index) => {
+                let img = new Image();
+                img.src = item.path;
+                img.className = 'slide-img';
+                img.dataset.key = item.key; 
+
+                img.onload = function() {
+                    tempImages[index] = img; 
+                    checkAllLoaded();
+                };
+
+                img.onerror = function() {
+                    checkAllLoaded();
+                };
+
+                function checkAllLoaded() {
+                    imagesLoadedCount++;
+                    if (imagesLoadedCount === imageDataList.length) {
+                        validImages = tempImages.filter(img => img !== undefined);
+                        renderSlider();
+                    }
+                }
+            });
+        } else {
+            renderSlider(); 
+        }
+
+        function renderSlider() {
+            if (validImages.length === 0) {
+                titleBox.innerHTML = "Không xác định khu vực";
+                document.getElementById('error-msg').style.display = 'block';
+                document.getElementById('btn-prev').style.display = 'none';
+                document.getElementById('btn-next').style.display = 'none';
+                return;
+            }
+
+            validImages.forEach((img, idx) => {
+                slider.appendChild(img);
+                let dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.onclick = () => goToSlide(idx);
+                dotsContainer.appendChild(dot);
+                dots.push(dot);
+            });
+            
+            goToSlide(0);
+            
+            if(validImages.length === 1) {
+                document.getElementById('btn-prev').style.display = 'none';
+                document.getElementById('btn-next').style.display = 'none';
+                dotsContainer.style.display = 'none';
+            }
+        }
+
+        function changeSlide(step) {
+            if(validImages.length <= 1) return;
+            let newIndex = currentIndex + step;
+            if (newIndex >= validImages.length) newIndex = 0;
+            if (newIndex < 0) newIndex = validImages.length - 1;
+            goToSlide(newIndex);
+        }
+
+        function goToSlide(index) {
+            if(validImages.length === 0) return;
+            
+            if (validImages[currentIndex]) {
+                validImages[currentIndex].classList.remove('active');
+                dots[currentIndex].classList.remove('active');
+            }
+            
+            currentIndex = index;
+            
+            validImages[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+
+            updateImageInfo(validImages[currentIndex].dataset.key);
+        }
+
+        // 3. Hàm cập nhật thông tin hiển thị chính xác theo từng cột
+        function updateImageInfo(imageKey) {
+            const meta = window.IMAGE_METADATA || {};
+            const rowThis = meta[imageKey] || {};
+
+            // Xử lý các biến lấy từ DB (Tránh lỗi 'null' string từ database)
+            const getValidString = (val) => {
+                if (val !== null && val !== undefined && String(val).trim().toLowerCase() !== 'null' && String(val).trim() !== '') {
+                    return String(val).trim();
+                }
+                return null;
+            };
+
+            let buildingName = getValidString(rowThis.building) || `Tòa nhà ${baseId}`;
+            let specificLocation = getValidString(rowThis.specific_location);
+            let floor = getValidString(rowThis.floor);
+            let description = getValidString(rowThis.description);
+
+            // --- TẠO NỘI DUNG TITLE BOX ---
+            let titleHtml = `Tòa nhà: <b>${buildingName}</b>`;
+
+            if (specificLocation || floor) {
+                titleHtml += `<br>Địa điểm: `;
+                
+                if (specificLocation) {
+                    titleHtml += `<b>${specificLocation}</b>`;
+                }
+                
+                if (floor) {
+                    // Nếu có cả specific_location thì thêm khoảng trắng trước Tầng
+                    titleHtml += specificLocation ? ` (Tầng ${floor})` : `Tầng ${floor}`;
+                }
+            }
+            
+            titleBox.innerHTML = titleHtml;
+
+            // --- TẠO NỘI DUNG DESC BOX ---
+            if (description) {
+                descBox.innerHTML = description;
+                descBox.style.display = 'block';
+            } else {
+                descBox.style.display = 'none';
+            }
+        }
+
+        document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+        document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+    })();
+    </script>
+</body>
+</html>

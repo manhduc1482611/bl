@@ -1,0 +1,238 @@
+/* =========================================
+   FILE: css/responsive.css
+   MÔ TẢ: ĐỒNG BỘ GIAO DIỆN DI ĐỘNG & TABLET CHO TOÀN HỆ THỐNG
+========================================= */
+
+/* =========================================
+   1. MÀN HÌNH TABLET (Dưới 992px)
+========================================= */
+@media (max-width: 992px) {
+    .news-layout-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .news-main-content,
+    .news-sidebar {
+        flex: none;
+        width: 100%;
+    }
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .majors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =========================================
+   2. MÀN HÌNH ĐIỆN THOẠI (Dưới 768px)
+========================================= */
+@media (max-width: 768px) {
+    /* --- A. CHUNG (Header, Footer, Layout) --- */
+    .header-wrapper,
+    .navbar-wrapper,
+    .main-content-wrapper,
+    .footer-wrapper {
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+    .header-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    .header-right {
+        align-items: center;
+        width: 100%;
+    }
+    .search-box {
+        width: 90%;
+    }
+
+    /* --- B. MENU ĐIỆN THOẠI (NÚT 3 GẠCH) --- */
+    .navbar-wrapper {
+        position: relative;
+        min-height: 55px;
+        background: #003478;
+    }
+    .navbar-wrapper .menu-toggle {
+        display: block !important;
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+        background: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 24px;
+        color: #003478;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .navbar-wrapper .menu-toggle i {
+        font-size: 1.4rem;
+    }
+
+    /* Ẩn menu ngang mặc định, hiện menu dọc khi click */
+    .main-navbar .nav-container {
+        display: none !important;
+        flex-direction: column !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        padding: 0;
+        margin: 0;
+        white-space: normal;
+        height: auto;
+    }
+    .main-navbar .nav-container.active-menu {
+        display: flex !important;
+    }
+    .main-navbar .nav-container a {
+        display: block;
+        width: 100%;
+        padding: 14px 20px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        font-size: 16px;
+        color: #003478;
+        background: #fff;
+        font-weight: 600;
+        text-transform: none;
+    }
+    .main-navbar .nav-container a:hover,
+    .main-navbar .nav-container a.active {
+        background: #f39c12;
+        color: #fff;
+    }
+
+    /* --- C. TRANG INTRO --- */
+    .main-title {
+        font-size: 2rem;
+    }
+    .start-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    /* --- D. TRANG CHỦ --- */
+    .hero-slider {
+        height: 250px;
+    }
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    .mission-box {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    .mission-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    .majors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* --- E. TRANG TIN TỨC --- */
+    .news-container {
+        padding: 20px 15px;
+    }
+    .news-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .news-thumb {
+        width: 100%;
+    }
+    .news-thumb img {
+        height: auto;
+        aspect-ratio: 16/9;
+    }
+    .news-info a {
+        font-size: 18px;
+    }
+
+    /* --- F. TRANG GIỚI THIỆU --- */
+    .page-container {
+        padding: 20px 15px;
+        margin: 20px auto;
+    }
+    .page-title {
+        font-size: 22px;
+    }
+    section h2 {
+        font-size: 20px;
+    }
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+    .gallery img {
+        height: auto;
+        aspect-ratio: 16/9;
+    }
+
+    /* --- G. TRANG LIÊN HỆ --- */
+    .contact-section {
+        height: 50vh;
+        min-height: 400px;
+    }
+
+    /* --- H. TRANG TÌM ĐƯỜNG --- */
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .custom-dropdown {
+        width: 100%;
+        margin-right: 0 !important;
+    }
+    .video-layout {
+        flex-direction: column;
+    }
+    .video-wrapper {
+        height: 250px;
+    }
+    .playback-controls {
+        width: 100%;
+        gap: 10px;
+        padding: 8px;
+    }
+    .btn-control {
+        flex: 1;
+        justify-content: center;
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    .speed-controls {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .speed-controls button {
+        width: auto;
+        padding: 6px 10px;
+        flex: 1;
+    }
+    .speed-controls span {
+        display: none;
+    }
+    #map-container {
+        min-height: 420px;
+    }
+    .video-map-area.video-playing #map-container {
+        width: min(280px, 45%);
+        height: 180px;
+        top: 12px;
+        right: 12px;
+    }
+}

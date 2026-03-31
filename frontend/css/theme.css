@@ -1,0 +1,222 @@
+/* =========================================
+   THEME: Nâng cấp UI/UX toàn bộ website
+   KHÔNG ẢNH HƯỞNG CẤU TRÚC, GIỮ NGUYÊN NỘI DUNG
+========================================= */
+
+/* --- TỔNG THỂ --- */
+body {
+    font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+/* --- HEADER & FOOTER (GIỮ NGUYÊN CẤU TRÚC) --- */
+.header-wrapper {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.top-header {
+    background: linear-gradient(135deg, #ffffff 0%, #fef9e6 100%);
+    border-bottom: 1px solid rgba(243, 156, 18, 0.2);
+}
+
+.school-name h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.logo-circle {
+    transition: transform 0.3s ease;
+}
+.logo-circle:hover {
+    transform: scale(1.02);
+}
+
+/* --- NAVBAR (GIỮ NGUYÊN JS) --- */
+.main-navbar {
+    background: linear-gradient(90deg, #003478, #002c60);
+    box-shadow: 0 4px 12px rgba(0, 52, 120, 0.2);
+}
+
+.main-navbar a {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.25s ease;
+}
+
+.main-navbar a:hover,
+.main-navbar a.active {
+    background-color: #f39c12;
+    color: #003478;
+    transform: translateY(-2px);
+}
+
+/* --- NÚT 3 GẠCH TRÊN MOBILE (GIỮ NGUYÊN CSS CŨ) --- */
+@media (max-width: 768px) {
+    .navbar-wrapper .menu-toggle {
+        left: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 6px 12px;
+    }
+    .navbar-wrapper .menu-toggle i {
+        font-size: 1.4rem;
+        color: #003478;
+    }
+}
+
+/* --- CARD, NÚT, HOVER HIỆN ĐẠI --- */
+.btn-find,
+.cta-btn,
+.map-btn,
+.btn-control,
+.btn-tour-yes,
+.btn-set-start,
+.btn-set-end,
+.utility-card button,
+.major-card button {
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.btn-find:hover,
+.cta-btn:hover,
+.map-btn:hover,
+.btn-control:hover:not(:disabled),
+.btn-tour-yes:hover,
+.btn-set-start:hover,
+.btn-set-end:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 52, 120, 0.2);
+}
+
+/* --- TRANG CHỦ: CÁC CARD & KHUNG --- */
+.news-card,
+.utility-card,
+.major-card,
+.mission-box,
+.timeline-content {
+    transition: all 0.3s ease;
+}
+
+.news-card:hover,
+.utility-card:hover,
+.major-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 30px -12px rgba(0, 52, 120, 0.2);
+}
+
+/* --- SLIDER TRANG CHỦ (KHÔNG ẢNH HƯỞNG JS) --- */
+.hero-slider {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.15);
+}
+
+.prev-btn,
+.next-btn {
+    background: rgba(0, 52, 120, 0.7);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+.prev-btn:hover,
+.next-btn:hover {
+    background: #f39c12;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* --- TIN TỨC, GIỚI THIỆU, LIÊN HỆ --- */
+.news-item {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 1px solid #eef2f6;
+    transition: all 0.3s;
+}
+.news-item:hover {
+    box-shadow: 0 12px 24px -8px rgba(0, 52, 120, 0.12);
+    border-color: #f39c12;
+}
+
+.gallery img {
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.4s ease, box-shadow 0.3s;
+}
+.gallery img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 52, 120, 0.2);
+}
+
+/* --- MAP, VIDEO, FORM (GIỮ NGUYÊN ID) --- */
+#map-container {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.video-wrapper {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+}
+
+.instruction-overlay {
+    background: rgba(0, 52, 120, 0.85);
+    backdrop-filter: blur(5px);
+    border-radius: 40px;
+    font-size: 1rem;
+    padding: 8px 24px;
+    bottom: 20px;
+    font-weight: 500;
+}
+
+/* --- SCROLL TOP BUTTON (GIỮ NGUYÊN) --- */
+.scroll-top-btn {
+    background: #003478;
+    color: white;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    bottom: 20px;
+    right: 20px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.scroll-top-btn:hover {
+    background: #f39c12;
+    transform: translateY(-5px);
+}
+
+/* --- RESPONSIVE CHỈNH NHẸ (KHÔNG XÓA NỘI DUNG) --- */
+@media (max-width: 768px) {
+    .page-title,
+    .news-title,
+    .welcome-title {
+        font-size: 1.6rem;
+    }
+    .news-card,
+    .utility-card,
+    .major-card {
+        padding: 20px;
+    }
+    .gallery img {
+        height: auto;
+        aspect-ratio: 16/9;
+    }
+    .instruction-overlay {
+        font-size: 0.8rem;
+        padding: 6px 16px;
+    }
+}
