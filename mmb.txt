@@ -1,0 +1,63 @@
+└── project_root/
+    │
+    ├── frontend/                       # ================= [1] GIAO DIỆN NGƯỜI DÙNG (HTML/JS) =================
+    │   ├── index.html                  # Trang Intro
+    │   ├── trang-chu.html              # Trang chủ
+    │   │
+    │   ├── pages/                      # Các trang con của User
+    │   │   ├── ban-do/
+    │   │   │   ├── ban-do.html         # Giao diện tìm đường (Canvas)
+    │   │   │   ├── tim-duong.html
+    │   │   │   └── toa-nha.html
+    │   │   ├── tin-tuc.html
+    │   │   ├── gioi-thieu.html
+    │   │   ├── lien-he.html
+    │   │   └── huong-dan.html
+    │   │
+    │   ├── css/                        # Style cho giao diện Frontend
+    │   │   ├── style.css               # Dùng chung (Header, Footer, Reset)
+    │   │   └── pages/                  # Chia theo từng trang tương tự HTML
+    │   │
+    │   ├── js/                         # Logic hiển thị cho Frontend
+    │   │   ├── common.js               # Logic Menu, Scroll...
+    │   │   ├── services/
+    │   │   │   └── api.js              # [QUAN TRỌNG] Hàm fetch() gọi sang thư mục backend/
+    │   │   └── controllers/            # Logic điều khiển từng trang (ban-do.js, tin-tuc.js...)
+    │   │
+    │   └── assets/                     # Tài nguyên tĩnh (Hình ảnh, Video, Âm thanh)
+    │       ├── images/
+    │       └── media/
+    │
+    ├── backend/                        # ================= [2] MÁY CHỦ & CƠ SỞ DỮ LIỆU (PHP) =================
+    │   ├── config.php                  # Kết nối Database (PDO/MySQL) - Dùng chung cho cả Admin & Frontend
+    │   │
+    │   ├── api-ban-do.php              # Nhận yêu cầu từ frontend/js/api.js -> Lấy tọa độ từ SQL -> Trả về JSON
+    │   └── api-tin-tuc.php             # Trả về danh sách bài viết dưới dạng JSON
+    │
+    └── admin/                          # ================= [3] QUẢN TRỊ VIÊN (PHP BẢO MẬT) =================
+        │
+        ├── includes/                   # Các khối giao diện/logic dùng chung cho Admin
+        │   ├── auth.php                # Chặn truy cập nếu chưa đăng nhập (Kiểm tra $_SESSION)
+        │   ├── header.php              # Thẻ <head>, thanh Sidebar bên trái, Topbar
+        │   └── footer.php              # Đóng thẻ, nhúng script
+        │
+        ├── actions/                    # [XỬ LÝ NGẦM CRUD] Không có HTML, chỉ nhận dữ liệu và chạy SQL
+        │   ├── action-map.php          # Xử lý Insert/Update/Delete cho tọa độ bản đồ
+        │   └── action-news.php         # Xử lý Insert/Update/Delete cho tin tức
+        │
+        ├── css/                        # Style riêng cho giao diện Admin
+        │   ├── login.css               # Trang đăng nhập
+        │   └── admin-layout.css        # Giao diện bảng, form, popup (modal), sidebar
+        │
+        ├── js/                         # Logic thao tác quản trị
+        │   ├── admin-map.js            # Bắt sự kiện click Lưu/Xóa -> Gửi AJAX sang action-map.php
+        │   └── admin-news.js           # Xử lý form thêm bài viết, upload ảnh...
+        │
+        ├── assets/                     # Tài nguyên riêng của Admin (nếu có)
+        │   └── img/                    # Logo admin, icon...
+        │
+        ├── login.php                   # [GIAO DIỆN] Trang đăng nhập (Tạo Session)
+        ├── logout.php                  # Hủy Session và đá về login.php
+        ├── dashboard.php               # [GIAO DIỆN] Trang chủ Admin (Thống kê số lượng tin, số địa điểm...)
+        ├── quan-ly-ban-do.php          # [GIAO DIỆN] Bảng danh sách điểm đến + Popup Thêm/Sửa
+        └── quan-ly-tin-tuc.php         # [GIAO DIỆN] Bảng danh sách tin tức + Popup Thêm/Sửa
