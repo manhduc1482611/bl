@@ -3,7 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getMapData, getNewsData, getNewsById, getAccounts, updateLocationType, addLocation, updateLocation, deleteLocation } = require('./dbOperations');
+const { getMapData, getLocationByCode, getNewsData, getNewsById, getAccounts, updateLocationType, addLocation, updateLocation, deleteLocation, addNews, updateNews, deleteNews } = require('./dbOperations');
 require('dotenv').config();
 
 const app = express();
@@ -12,7 +12,12 @@ const app = express();
 app.use(cors()); // Cho phép Frontend (VD: Live Server) gọi API không bị chặn lỗi CORS
 app.use(express.json()); 
 
-const uploadPath = path.join(__dirname, '../frontend/assets/images/pages/ban-do/toa-nha');
+const uploadPath = path.join(__dirname, '../frontend/assets/images/pages/ban-do/tim-duong');
+const newsUploadPath = path.join(__dirname, '../frontend/assets/images/pages/tin-tuc');
+
+// Cho phép truy cập thư mục ảnh tòa nhà công khai qua URL
+app.use('/api/location-images', express.static(uploadPath));
+
 function ensureUploadPath() {
     if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
 }
@@ -30,10 +35,24 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const rawCode = req.body.location_code || req.params.code;
         const locationCode = sanitizeFileName(rawCode);
-        cb(null, `${locationCode}.jpg`);
+        const ext = path.extname(file.originalname) || '.jpg';
+        cb(null, `${locationCode}${ext}`);
     }
 });
 const upload = multer({ storage: storage });
+
+const newsStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (!fs.existsSync(newsUploadPath)) fs.mkdirSync(newsUploadPath, { recursive: true });
+        cb(null, newsUploadPath);
+    },
+    filename: function (req, file, cb) {
+        const timestamp = Date.now();
+        const ext = path.extname(file.originalname) || '.jpg';
+        cb(null, `news-${timestamp}${ext}`);
+    }
+});
+const uploadNews = multer({ storage: newsStorage });
 
 // Tạo API Endpoint: Lấy dữ liệu bản đồ
 app.get('/api/map-data', async (req, res) => {
@@ -49,11 +68,15 @@ app.get('/api/map-data', async (req, res) => {
 
 app.get('/api/locations/:code', async (req, res) => {
     try {
-        const location = await getLocationByCode(req.params.code);
+        const code = req.params.code;
+        const location = await getLocationByCode(code);
         if (!location) {
             return res.status(404).json({ error: 'Không tìm thấy địa điểm.' });
         }
-        res.status(200).json({ location });
+        
+        // Sử dụng tên file từ cột image trong database
+        const imageUrl = location.image ? `/api/location-images/${location.image}` : null;
+        res.status(200).json({ location: { ...location, imageUrl } });
     } catch (error) {
         console.error('Lỗi API /api/locations/:code:', error);
         res.status(500).json({ error: 'Lỗi Server: Không thể lấy dữ liệu địa điểm.' });
@@ -96,6 +119,51 @@ app.get('/api/accounts', async (req, res) => {
     }
 });
 
+// API Endpoint: Thêm tin tức mới
+app.post('/api/news', uploadNews.single('anhDaiDien'), async (req, res) => {
+    try {
+        const newsData = {
+            ...req.body,
+            anhDaiDien: req.file ? `../assets/images/pages/tin-tuc/${req.file.filename}` : req.body.anhDaiDien,
+            blocks: req.body.blocks ? JSON.parse(req.body.blocks) : []
+        };
+        const id = await addNews(newsData);
+        res.status(201).json({ message: "Thêm tin tức thành công", id });
+    } catch (error) {
+        console.error("Lỗi API POST /api/news:", error);
+        res.status(500).json({ error: "Lỗi Server: Không thể thêm tin tức." });
+    }
+});
+
+// API Endpoint: Cập nhật tin tức
+app.put('/api/news/:id', uploadNews.single('anhDaiDien'), async (req, res) => {
+    try {
+        const id = req.params.id;
+        const newsData = {
+            ...req.body,
+            anhDaiDien: req.file ? `../assets/images/pages/tin-tuc/${req.file.filename}` : req.body.anhDaiDien,
+            blocks: req.body.blocks ? JSON.parse(req.body.blocks) : []
+        };
+        await updateNews(id, newsData);
+        res.status(200).json({ message: "Cập nhật tin tức thành công" });
+    } catch (error) {
+        console.error("Lỗi API PUT /api/news/:id:", error);
+        res.status(500).json({ error: "Lỗi Server: Không thể cập nhật tin tức." });
+    }
+});
+
+// API Endpoint: Xóa tin tức
+app.delete('/api/news/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        await deleteNews(id);
+        res.status(200).json({ message: "Xóa tin tức thành công" });
+    } catch (error) {
+        console.error("Lỗi API DELETE /api/news/:id:", error);
+        res.status(500).json({ error: "Lỗi Server: Không thể xóa tin tức." });
+    }
+});
+
 // API Endpoint: Thêm địa điểm mới
 app.post('/api/locations', upload.single('image'), async (req, res) => {
     try {
@@ -107,7 +175,17 @@ app.post('/api/locations', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'Vui lòng chọn tòa nhà.' });
         }
 
-        await addLocation(req.body);
+        // Kiểm tra xem mã địa điểm đã tồn tại chưa
+        const existing = await getLocationByCode(location_code);
+        if (existing) {
+            return res.status(400).json({ error: 'Mã địa điểm này đã tồn tại trên hệ thống.' });
+        }
+
+        const locationData = {
+            ...req.body,
+            image: req.file ? req.file.filename : null
+        };
+        await addLocation(locationData);
         res.status(201).json({ message: "Thêm mới thành công" });
     } catch (error) {
         console.error("Lỗi API POST /api/locations:", error);
@@ -125,16 +203,40 @@ app.put('/api/locations/:code', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'Vui lòng chọn tòa nhà.' });
         }
 
-        // Nếu đổi mã địa điểm và không upload ảnh mới, ta cần đổi tên file ảnh cũ
-        if (newCode && newCode !== oldCode && !req.file) {
-            const oldPath = path.join(uploadPath, `${sanitizeFileName(oldCode)}.jpg`);
-            const newPath = path.join(uploadPath, `${sanitizeFileName(newCode)}.jpg`);
+        const location = await getLocationByCode(oldCode);
+        if (!location) return res.status(404).json({ error: 'Không tìm thấy địa điểm.' });
+
+        // Nếu đổi mã mới, kiểm tra xem mã mới có bị trùng với địa điểm khác không
+        if (newCode && newCode !== oldCode) {
+            const existing = await getLocationByCode(newCode);
+            if (existing) return res.status(400).json({ error: 'Mã địa điểm mới đã tồn tại.' });
+        }
+
+        let imageToSave = location.image;
+
+        // Logic xử lý ảnh khi sửa
+        if (req.file) {
+            // Nếu upload ảnh mới: Xóa ảnh cũ (nếu có)
+            if (location.image && location.image !== req.file.filename) {
+                const oldImagePath = path.join(uploadPath, location.image);
+                if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
+            }
+            imageToSave = req.file.filename;
+        } else if (newCode && newCode !== oldCode && location.image) {
+            // Nếu đổi mã code nhưng không upload ảnh mới: Đổi tên file ảnh cũ theo mã code mới
+                const ext = path.extname(location.image);
+                const newImageName = `${sanitizeFileName(newCode)}${ext}`;
+                const oldPath = path.join(uploadPath, location.image);
+                const newPath = path.join(uploadPath, newImageName);
+
             if (fs.existsSync(oldPath)) {
                 fs.renameSync(oldPath, newPath);
+                imageToSave = newImageName;
             }
         }
 
-        await updateLocation(req.params.code, req.body);
+        const locationData = { ...req.body, image: imageToSave };
+        await updateLocation(oldCode, locationData);
         res.status(200).json({ message: "Cập nhật thành công" });
     } catch (error) {
         console.error("Lỗi API PUT /api/locations/:code:", error);
@@ -145,11 +247,15 @@ app.put('/api/locations/:code', upload.single('image'), async (req, res) => {
 // API Endpoint: Xóa địa điểm
 app.delete('/api/locations/:code', async (req, res) => {
     try {
-        const locationCode = sanitizeFileName(req.params.code);
-        await deleteLocation(locationCode);
-        const imageFilePath = path.join(uploadPath, `${locationCode}.jpg`);
-        if (fs.existsSync(imageFilePath)) {
-            fs.unlinkSync(imageFilePath);
+        const code = req.params.code;
+        const location = await getLocationByCode(code);
+        await deleteLocation(code);
+
+        if (location && location.image) {
+            const imageFilePath = path.join(uploadPath, location.image);
+            if (fs.existsSync(imageFilePath)) {
+                fs.unlinkSync(imageFilePath);
+            }
         }
         res.status(200).json({ message: "Xóa thành công" });
     } catch (error) {

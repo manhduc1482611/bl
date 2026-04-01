@@ -23,6 +23,22 @@ document.addEventListener('DOMContentLoaded', async function () {
             updateSelectedNodeId(this.value);
         });
     }
+
+    // Gắn sự kiện cho Form lưu địa điểm
+    const editForm = document.getElementById('edit-location-form');
+    if (editForm) editForm.addEventListener('submit', saveLocation);
+
+    // Gắn sự kiện cho nút Thêm địa điểm mới (nếu có trong HTML)
+    const addBtn = document.getElementById('btn-add-location');
+    if (addBtn) addBtn.addEventListener('click', openAddModal);
+
+    // Gắn sự kiện cho các nút đóng Modal
+    const closeButtons = document.querySelectorAll('.btn-close-modal, .btn-cancel');
+    closeButtons.forEach(btn => btn.addEventListener('click', closeEditModal));
+
+    // Đóng modal khi click ra ngoài vùng overlay
+    const modal = document.getElementById('edit-modal');
+    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeEditModal(); });
 });
 
 function initImageUpload() {
@@ -74,6 +90,14 @@ async function loadLocationList() {
         const data = await response.json();
         allLocations = data.locations || [];
         const nodes = data.nodes || [];
+
+        // Thêm logic sắp xếp (Natural Sort)
+        allLocations.sort((a, b) => {
+            const codeA = a.location_code || '';
+            const codeB = b.location_code || '';
+            // Sử dụng localeCompare với numeric: true để hiểu số 10 lớn hơn số 2
+            return codeA.localeCompare(codeB, undefined, { numeric: true, sensitivity: 'base' });
+        });
 
         populateBuildingDropdown(nodes);
 
@@ -153,9 +177,17 @@ function getNodeIdForBuilding(buildingName) {
 
 function updateSelectedNodeId(buildingName) {
     const nodeIdInput = document.getElementById('edit-node-id');
+    const locationCodeInput = document.getElementById('edit-location-code');
     if (!nodeIdInput) return;
+
     const nodeId = getNodeIdForBuilding(buildingName);
     nodeIdInput.value = nodeId || '';
+
+    // Logic tự động điền mã địa điểm (chỉ chạy khi THÊM MỚI - editingOriginalCode === null)
+    if (!editingOriginalCode && nodeId && locationCodeInput) {
+        const nextCode = generateNextLocationCode(nodeId);
+        locationCodeInput.value = nextCode;
+    }
 }
 
 async function updateSearchType(code, value, selectEl) {
@@ -203,6 +235,7 @@ function openAddModal() {
     document.getElementById('edit-specific-location').value = '';
     document.getElementById('edit-floor').value = '';
     document.getElementById('edit-description').value = '';
+    document.getElementById('image-preview-container').style.display = 'none';
     
     const modalTitle = document.querySelector('#edit-modal h3');
     if (modalTitle) modalTitle.innerText = 'Thêm địa điểm mới';
@@ -223,11 +256,16 @@ function openEditModal(code) {
     }
 
     removeSelectedImage();
-    // Hiển thị ảnh hiện tại nếu có
+    
+    // Hiển thị ảnh hiện tại từ thư mục tim-duong dựa trên cột image trong DB
     const preview = document.getElementById('image-preview');
-    preview.src = `../../assets/images/pages/ban-do/toa-nha/${loc.location_code}.jpg?t=${Date.now()}`;
-    document.getElementById('image-preview-container').style.display = 'block';
-    preview.onerror = () => { document.getElementById('image-preview-container').style.display = 'none'; };
+    if (loc.image) {
+        preview.src = `../../assets/images/pages/ban-do/tim-duong/${loc.image}?t=${Date.now()}`;
+        document.getElementById('image-preview-container').style.display = 'block';
+        preview.onerror = () => { document.getElementById('image-preview-container').style.display = 'none'; };
+    } else {
+        document.getElementById('image-preview-container').style.display = 'none';
+    }
 
     const deleteBtn = document.getElementById('btn-delete-location');
     if (deleteBtn) deleteBtn.style.display = 'block'; // Hiện nút xóa khi chỉnh sửa
@@ -253,34 +291,33 @@ function closeEditModal() {
 // Hàm gửi yêu cầu lưu thông tin đã sửa lên Server
 async function saveLocation(event) {
     if (event) event.preventDefault();
+
+    const submitBtn = event.target.querySelector('button[type="submit"]');
     const codeInput = document.getElementById('edit-location-code');
-    const code = (codeInput.value || '').trim();
+    const code = (codeInput?.value || '').trim().toUpperCase(); // Tự động viết hoa mã
     const isEdit = editingOriginalCode !== null;
 
-    const building = (document.getElementById('edit-building').value || '').trim();
-    const nodeId = (document.getElementById('edit-node-id').value || '').trim();
-    const specificLocation = (document.getElementById('edit-specific-location').value || '').trim();
-    const floor = (document.getElementById('edit-floor').value || '').trim();
-    const description = (document.getElementById('edit-description').value || '').trim();
+    const building = document.getElementById('edit-building')?.value?.trim();
+    const nodeId = document.getElementById('edit-node-id')?.value?.trim();
+    const specificLocation = document.getElementById('edit-specific-location')?.value?.trim();
+    const floor = document.getElementById('edit-floor')?.value?.trim();
+    const description = document.getElementById('edit-description')?.value?.trim();
 
-    if (!code) {
-        alert('Mã địa điểm không được bỏ trống.');
-        return;
-    }
-    if (!building) {
-        alert('Vui lòng chọn tòa nhà.');
-        return;
-    }
+    if (!code) return alert('Vui lòng nhập Mã địa điểm.');
+    if (!building) return alert('Vui lòng chọn tòa nhà.');
+
+    // Vô hiệu hóa nút lưu để tránh bấm nhiều lần
+    if (submitBtn) submitBtn.disabled = true;
 
     const formData = new FormData();
     formData.append('building', building);
-    formData.append('node_id', nodeId);
+    formData.append('node_id', nodeId || ''); // Đảm bảo không gửi "undefined"
     formData.append('specific_location', specificLocation);
     formData.append('floor', floor);
     formData.append('description', description);
-    
-    formData.append('location_code', code); // Luôn gửi mã địa điểm (có thể là mã mới)
+    formData.append('location_code', code);
 
+    // Gửi file ảnh nếu có chọn mới
     if (selectedImageFile) {
         formData.append('image', selectedImageFile);
     }
@@ -306,19 +343,21 @@ async function saveLocation(event) {
             closeEditModal();
             loadLocationList(); // Tải lại bảng để cập nhật dữ liệu mới
         } else {
-            const errorText = await response.text();
-            console.error("Lỗi lưu thông tin:", response.status, errorText);
-            alert(`Lỗi khi lưu thông tin. (${response.status}) ${errorText}`);
+            const errorData = await response.json();
+            alert(`Lỗi: ${errorData.error || 'Không thể lưu thông tin'}`);
         }
     } catch (error) {
         console.error("Lỗi API:", error);
         alert("Không thể kết nối đến máy chủ.");
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
     }
 }
 
 // Hàm xử lý xóa địa điểm
 async function deleteLocation() {
-    const code = document.getElementById('edit-location-code').value;
+    const elCode = document.getElementById('edit-location-code');
+    const code = elCode?.value;
     if (!code) return;
 
     if (!confirm(`Bạn có chắc chắn muốn xóa địa điểm ${code}? Hành động này không thể hoàn tác.`)) {
@@ -350,4 +389,29 @@ function showToast(message) {
     toast.innerText = message;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2000);
+}
+function generateNextLocationCode(nodeId) {
+    // Tiền tố mong muốn, ví dụ: "1_"
+    const prefix = nodeId + "_";
+
+    // Lọc ra tất cả các location_code hiện có bắt đầu bằng "nodeId_"
+    const relatedCodes = allLocations
+        .map(loc => loc.location_code)
+        .filter(code => code && code.startsWith(prefix));
+
+    if (relatedCodes.length === 0) {
+        // Nếu chưa có mã nào cho node này, bắt đầu từ 1_1
+        return prefix + "1";
+    }
+
+    // Tách lấy phần số sau dấu "_" và chuyển thành số nguyên
+    const suffixes = relatedCodes.map(code => {
+        const parts = code.split('_');
+        const lastPart = parts[parts.length - 1]; // Lấy phần cuối sau dấu gạch dưới
+        return parseInt(lastPart, 10);
+    }).filter(num => !isNaN(num)); // Loại bỏ các giá trị không phải số
+
+    // Tìm số lớn nhất và cộng thêm 1
+    const maxSuffix = suffixes.length > 0 ? Math.max(...suffixes) : 0;
+    return prefix + (maxSuffix + 1);
 }

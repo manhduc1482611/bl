@@ -21,9 +21,14 @@ async function getMapData() {
                     specific_location,
                     floor,
                     description,
-                    type
-             FROM Locations`
+                    type,
+                    image
+             FROM view_locations_sorted
+             ORDER BY 
+                CAST(SUBSTRING_INDEX(location_code, '_', 1) AS UNSIGNED) ASC,
+                CAST(SUBSTRING_INDEX(location_code, '_', -1) AS UNSIGNED) ASC`
         );
+
         const [turnRules] = await pool.query(
             `SELECT id,
                     from_node,
@@ -49,8 +54,8 @@ async function getMapData() {
 async function getLocationByCode(locationCode) {
     try {
         const [rows] = await pool.query(
-            `SELECT location_code, node_id, building, specific_location, floor, description, type
-             FROM Locations
+            `SELECT location_code, node_id, building, specific_location, floor, description, type, image
+             FROM view_locations_sorted
              WHERE location_code = ?
              LIMIT 1`,
             [locationCode]
@@ -103,12 +108,16 @@ async function getAccounts() {
 // Nếu có nhiều node trùng tên, ưu tiên id kết thúc bằng '.1'.
 async function resolveNodeId(building) {
     if (!building || !String(building).trim()) return null;
+    
+    // Làm sạch tên tòa nhà trước khi truy vấn
+    const cleanBuilding = building.trim();
+
     try {
         const [rows] = await pool.query(
             `SELECT id
              FROM Nodes
-             WHERE LOWER(name) = LOWER(?)`,
-            [building.trim()]
+             WHERE LOWER(name) = LOWER(?) OR LOWER(id) = LOWER(?)`,
+            [cleanBuilding, cleanBuilding]
         );
 
         if (!rows || rows.length === 0) {
@@ -140,14 +149,25 @@ async function updateLocationType(locationCode, type) {
  * Thêm một địa điểm mới vào bảng Locations
  */
 async function addLocation(data) {
-    const { location_code, building, specific_location, floor, description, type, node_id: manual_node_id } = data;
-    const node_id = (manual_node_id && manual_node_id !== 'null' && manual_node_id !== '') ? manual_node_id : await resolveNodeId(building);
+    // Đảm bảo không có giá trị nào là undefined khi đưa vào câu lệnh SQL
+    const location_code = data.location_code ? String(data.location_code).trim() : null;
+    const building = data.building || null;
+    const specific_location = data.specific_location || null;
+    const floor = data.floor || null;
+    const description = data.description || null;
+    const type = data.type !== undefined ? data.type : 1;
+    const image = data.image || null;
+    const manual_node_id = data.node_id;
+    
+    // Kiểm tra an toàn cho node_id
+    const isValidManualId = manual_node_id && manual_node_id !== 'null' && manual_node_id !== 'undefined' && String(manual_node_id).trim() !== '';
+    const node_id = isValidManualId ? manual_node_id : await resolveNodeId(building);
 
     try {
         await pool.query(
-            `INSERT INTO Locations (location_code, node_id, building, specific_location, floor, description, type) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [location_code, node_id || null, building || null, specific_location || null, floor || null, description || null, type || 1]
+            `INSERT INTO Locations (location_code, node_id, building, specific_location, floor, description, type, image) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [location_code, node_id, building, specific_location, floor, description, type, image]
         );
         return true;
     } catch (error) {
@@ -160,15 +180,36 @@ async function addLocation(data) {
  * Cập nhật thông tin địa điểm đã tồn tại
  */
 async function updateLocation(locationCode, data) {
-    const { location_code: newLocationCode, building, specific_location, floor, description, node_id: manual_node_id } = data;
-    const node_id = (manual_node_id && manual_node_id !== 'null' && manual_node_id !== '') ? manual_node_id : await resolveNodeId(building);
+    const newLocationCode = data.location_code || locationCode;
+    const building = data.building || null;
+    const specific_location = data.specific_location || null;
+    const floor = data.floor || null;
+    const description = data.description || null;
+    const type = data.type !== undefined ? data.type : null;
+    const image = data.image || null;
+    const manual_node_id = data.node_id;
+
+    // Đảm bảo node_id là null nếu không có giá trị hợp lệ
+    const isValidManualId = manual_node_id && manual_node_id !== 'null' && manual_node_id !== 'undefined' && String(manual_node_id).trim() !== '';
+    const node_id = isValidManualId ? manual_node_id : await resolveNodeId(building);
 
     try {
+        // Cập nhật đầy đủ các trường bao gồm cả type nếu có
+        let sql = `UPDATE Locations 
+                   SET location_code = ?, node_id = ?, building = ?, specific_location = ?, floor = ?, description = ?, image = ?`;
+        let params = [newLocationCode, node_id, building, specific_location, floor, description, image];
+
+        if (type !== null) {
+            sql += `, type = ?`;
+            params.push(type);
+        }
+
+        sql += ` WHERE location_code = ?`;
+        params.push(locationCode);
+
         await pool.query(
-            `UPDATE Locations 
-             SET location_code = ?, node_id = ?, building = ?, specific_location = ?, floor = ?, description = ? 
-             WHERE location_code = ?`,
-            [newLocationCode || locationCode, node_id || null, building || null, specific_location || null, floor || null, description || null, locationCode]
+            sql,
+            params
         );
         return true;
     } catch (error) {
@@ -193,6 +234,44 @@ async function deleteLocation(locationCode) {
     }
 }
 
+async function addNews(data) {
+    try {
+        const { tieuDe, ngay, anhDaiDien, moTaNgan, blocks } = data;
+        const [result] = await pool.query(
+            `INSERT INTO tintuc (tieuDe, ngay, anhDaiDien, moTaNgan, blocks) VALUES (?, ?, ?, ?, ?)`,
+            [tieuDe, ngay, anhDaiDien, moTaNgan, JSON.stringify(blocks || [])]
+        );
+        return result.insertId;
+    } catch (error) {
+        console.error("Lỗi khi thêm tin tức vào MySQL: ", error);
+        throw error;
+    }
+}
+
+async function updateNews(id, data) {
+    try {
+        const { tieuDe, ngay, anhDaiDien, moTaNgan, blocks } = data;
+        await pool.query(
+            `UPDATE tintuc SET tieuDe = ?, ngay = ?, anhDaiDien = ?, moTaNgan = ?, blocks = ? WHERE id = ?`,
+            [tieuDe, ngay, anhDaiDien, moTaNgan, JSON.stringify(blocks || []), id]
+        );
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi cập nhật tin tức trong MySQL: ", error);
+        throw error;
+    }
+}
+
+async function deleteNews(id) {
+    try {
+        await pool.query(`DELETE FROM tintuc WHERE id = ?`, [id]);
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi xóa tin tức trong MySQL: ", error);
+        throw error;
+    }
+}
+
 module.exports = { 
     getMapData, 
     getLocationByCode,
@@ -202,5 +281,8 @@ module.exports = {
     updateLocationType, 
     addLocation, 
     updateLocation,
-    deleteLocation
+    deleteLocation,
+    addNews,
+    updateNews,
+    deleteNews
 };

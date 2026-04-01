@@ -67,8 +67,9 @@ function updateDisplay() {
     // Cập nhật Hình ảnh
     const imgEl = document.getElementById('display-image');
     if (imgEl) {
-        // Đường dẫn ảnh giả định: assets/images/pages/ban-do/toa-nha/{location_code}.jpg
-        imgEl.src = `../../assets/images/pages/ban-do/toa-nha/${loc.location_code}.jpg`;
+        // Sử dụng tên file từ DB (loc.image) và trỏ vào thư mục tim-duong
+        const imageName = loc.image || `${loc.location_code}.jpg`;
+        imgEl.src = `../../assets/images/pages/ban-do/tim-duong/${imageName}`;
         imgEl.onerror = () => { imgEl.src = '../../assets/images/common/no-image.jpg'; };
     }
 
