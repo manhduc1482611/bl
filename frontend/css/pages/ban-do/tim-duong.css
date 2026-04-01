@@ -148,7 +148,7 @@
 .sub-list li:hover { background-color: #e2e6ea; color: #003478; }
 
 /* =========================================
-   3. KHUNG VIDEO (BỐ CỤC NGANG)
+   3. KHUNG VIDEO (BỐ CỤC NGANG) & BẢN ĐỒ THU NHỎ
 ========================================= */
 .video-container {
     max-width: 1000px;
@@ -179,6 +179,9 @@
 .video-main {
     flex: 1 1 520px;
     min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Khoảng cách giữa video và nút điều khiển */
 }
 
 #map-container {
@@ -201,19 +204,21 @@
     z-index: 1;
 }
 
+/* KHU VỰC THU NHỎ BẢN ĐỒ KHI PHÁT VIDEO */
+/* KHU VỰC THU NHỎ BẢN ĐỒ KHI PHÁT VIDEO */
 .video-map-area.video-playing #map-container {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 340px;
-    height: 210px;
-    min-height: auto;
-    margin-top: 0;
+    position: absolute !important;
+    top: 16px !important;
+    right: 16px !important;
+    width: 340px !important;
+    height: 210px !important;
+    min-height: auto !important;
+    margin-top: 0 !important;
     border-radius: 16px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     background: #fff;
-    z-index: 20;
+    z-index: 99 !important; /* Đẩy lên trên cùng */
 }
 
 .video-map-area.video-playing .video-container {
@@ -243,14 +248,6 @@
 }
 
 /* 4. CHỈNH CHIỀU CAO VIDEO & NÚT ĐIỀU KHIỂN */
-.video-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* Khoảng cách giữa video và nút điều khiển */
-    min-width: 0; /* Ngăn chặn tràn nội dung */
-}
-
 .video-wrapper {
     position: relative;
     width: 100%;
@@ -405,30 +402,27 @@
 
 #btnStartJourney { background: #f39c12 !important; color: white; display: none; }
 #btnStartJourney:hover { background: #d68910 !important; }
+
 /* 1. Lớp bao phủ toàn màn hình (Overlay) */
 .guide-popup {
-    display: none; /* Mặc định ẩn, JS sẽ đổi thành 'flex' khi load trang */
+    display: none; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* Nền đen mờ 85% */
-    z-index: 999999; /* Đảm bảo luôn đè lên mọi phần tử khác */
-    
-    /* Căn giữa nội dung bên trong */
+    background-color: rgba(0, 0, 0, 0.85); 
+    z-index: 999999; 
     justify-content: center;
     align-items: center;
-    
-    /* Hiệu ứng mờ dần khi hiện ra */
     animation: fadeIn 0.3s ease-out;
 }
 
 /* 2. Khung chứa nội dung (hình ảnh) */
 .popup-content {
     position: relative;
-    max-width: 90%; /* Không quá rộng trên màn hình lớn */
-    max-height: 90vh; /* Không quá cao quá màn hình */
+    max-width: 90%; 
+    max-height: 90vh; 
     background: transparent;
     display: flex;
     justify-content: center;
@@ -442,9 +436,9 @@
     height: auto;
     max-width: 100%;
     max-height: 80vh;
-    border-radius: 12px; /* Bo góc nhẹ cho ảnh đẹp hơn */
+    border-radius: 12px; 
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
-    border: 3px solid #fff; /* Tạo viền trắng cho ảnh nổi bật */
+    border: 3px solid #fff; 
 }
 
 /* 4. Nút đóng (Dấu X) */
@@ -452,7 +446,7 @@
     position: absolute;
     top: -20px;
     right: -20px;
-    background-color: #ff4757; /* Màu đỏ nổi bật */
+    background-color: #ff4757; 
     color: white;
     border: 2px solid #fff;
     border-radius: 50%;
@@ -469,13 +463,11 @@
     z-index: 10;
 }
 
-/* Hiệu ứng khi di chuột vào nút đóng */
 .popup-close:hover {
     background-color: #ff6b81;
     transform: scale(1.1);
 }
 
-/* Animation hiện hình ảnh */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }

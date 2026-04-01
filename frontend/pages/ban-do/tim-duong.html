@@ -3,26 +3,24 @@
 
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Tìm đường - Bản đồ Học viện Ngân hàng</title>
 
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/pages/ban-do/tim-duong.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/theme.css">
-        <link rel="stylesheet" href="../../css/responsive.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
+    <link rel="stylesheet" href="../../css/responsive.css">
 </head>
 
 <body>
-<!-- Popup hướng dẫn sử dụng bản đồ -->
-<div id="guide-popup" class="guide-popup">
-    <div class="popup-content">
-        <button class="popup-close">&times;</button>
-        <img src="../../assets/images/pages/ban-do/chung/popup.png" alt="Hướng dẫn sử dụng bản đồ">
+    <div id="guide-popup" class="guide-popup">
+        <div class="popup-content">
+            <button class="popup-close">&times;</button>
+            <img src="../../assets/images/pages/ban-do/chung/popup.png" alt="Hướng dẫn sử dụng bản đồ">
+        </div>
     </div>
-</div>
+    
     <div class="main-content-wrapper">
         <div class="container">
             <h2 class="page-title">
@@ -55,61 +53,61 @@
                 
             </div>
 
-<div class="video-map-area">
-                    <div id="videoSection" class="video-container" style="display: none;">
-                        <h3 class="video-title"><i class="fas fa-video"></i> MÔ PHỎNG THỰC TẾ</h3>
+            <div class="video-map-area">
+                <div id="videoSection" class="video-container" style="display: none;">
+                    <h3 class="video-title"><i class="fas fa-video"></i> MÔ PHỎNG THỰC TẾ</h3>
 
-                        <div class="video-layout">
+                    <div class="video-layout">
 
-                            <div class="video-main">
-                                <div class="video-wrapper">
-                                    <video id="guideVideo" class="guide-video" muted playsinline>
-                                        <source src="" type="video/mp4">
-                                    </video>
-                                    <div id="instructionText" class="instruction-overlay">Đi thẳng</div>
-                                    <div id="tourPrompt" class="tour-prompt-overlay" style="display: none;">
-                                        <h4>ĐÃ ĐẾN NƠI! 📍</h4>
-                                        <p>Bạn có muốn xem video tham quan <strong id="tourPromptName"
-                                                style="color:#f39c12"></strong> không?</p>
-                                        <div class="tour-prompt-btns">
-                                            <button id="btnYesTour" class="btn-tour-yes"><i class="fas fa-play-circle"></i> Có, xem
-                                                ngay</button>
-                                            <button onclick="closeTourPrompt()" class="btn-tour-no">Không, cảm ơn</button>
-                                        </div>
+                        <div class="video-main">
+                            <div class="video-wrapper">
+                                <video id="guideVideo" class="guide-video" muted playsinline>
+                                    <source src="" type="video/mp4">
+                                </video>
+                                <div id="instructionText" class="instruction-overlay">Đi thẳng</div>
+                                <div id="tourPrompt" class="tour-prompt-overlay" style="display: none;">
+                                    <h4>ĐÃ ĐẾN NƠI! 📍</h4>
+                                    <p>Bạn có muốn xem video tham quan <strong id="tourPromptName"
+                                            style="color:#f39c12"></strong> không?</p>
+                                    <div class="tour-prompt-btns">
+                                        <button id="btnYesTour" class="btn-tour-yes"><i class="fas fa-play-circle"></i> Có, xem
+                                            ngay</button>
+                                        <button onclick="closeTourPrompt()" class="btn-tour-no">Không, cảm ơn</button>
                                     </div>
                                 </div>
-
-                                <div class="playback-controls">
-                                    <button id="btnPrevNode" class="btn-control">
-                                        <i class="fas fa-undo"></i> Quay lại điểm trước
-                                    </button>
-                                    <button id="btnPausePlay" class="btn-control">
-                                        <i class="fas fa-pause"></i> Tạm dừng
-                                    </button>
-                                </div>
                             </div>
 
-                            <div class="speed-controls">
-                                <span>Tốc độ</span>
-                                <button onclick="setSpeed(0.5)">0.5x</button>
-                                <button onclick="setSpeed(1.0)" class="active-speed">1.0x</button>
-                                <button onclick="setSpeed(1.5)">1.5x</button>
-                                <button onclick="setSpeed(2.0)">2.0x</button>
-                                <button onclick="setSpeed(4.0)">4.0x</button>
-                                <button onclick="setSpeed(10.0)">10.0x</button>
+                            <div class="playback-controls">
+                                <button id="btnPrevNode" class="btn-control">
+                                    <i class="fas fa-undo"></i> Quay lại điểm trước
+                                </button>
+                                <button id="btnPausePlay" class="btn-control">
+                                    <i class="fas fa-pause"></i> Tạm dừng
+                                </button>
                             </div>
-
                         </div>
-                        <p id="videoError" style="color: #d9534f; display: none; margin-top: 10px; font-weight: bold;"></p>
-                    </div>
 
-                    <div id="map-container" style="position: relative; width: 100%; height: 100%;">
-                        <object id="map-svg" data="../../assets/images/pages/ban-do/chung/mapfinal.drawio.svg"
-                            type="image/svg+xml" style="width: 100%; height: 100%;"></object>
+                        <div class="speed-controls">
+                            <span>Tốc độ</span>
+                            <button onclick="setSpeed(0.5)">0.5x</button>
+                            <button onclick="setSpeed(1.0)" class="active-speed">1.0x</button>
+                            <button onclick="setSpeed(1.5)">1.5x</button>
+                            <button onclick="setSpeed(2.0)">2.0x</button>
+                            <button onclick="setSpeed(4.0)">4.0x</button>
+                            <button onclick="setSpeed(10.0)">10.0x</button>
+                        </div>
 
-                        <canvas id="mapCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
                     </div>
+                    <p id="videoError" style="color: #d9534f; display: none; margin-top: 10px; font-weight: bold;"></p>
                 </div>
+
+                <div id="map-container">
+                    <object id="map-svg" data="../../assets/images/pages/ban-do/chung/mapfinal.drawio.svg"
+                        type="image/svg+xml" style="width: 100%; height: 100%;"></object>
+
+                    <canvas id="mapCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -144,183 +142,180 @@
     <script src="../../js/controllers/ban-do/tim-duong/ve-map.js"></script>
     <script src="../../js/controllers/ban-do/tim-duong/tim-duong.js"></script>
     
-<script>
-const svgObject = document.getElementById("map-svg");
+    <script>
+    const svgObject = document.getElementById("map-svg");
 
-function normalizeText(text) {
-    return String(text || '').trim().toLowerCase()
-        .normalize('NFD')
-        .replace(/\p{Diacritic}/gu, '')
-        .replace(/\s+/g, ' ');
-}
-
-svgObject.addEventListener("load", async function () {
-    console.log("✅ HỆ THỐNG SẴN SÀNG!");
-    const svgDoc = svgObject.contentDocument;
-    if (!svgDoc) return;
-
-    const mapData = await fetchMapData();
-    const nameToIdMap = {};
-    const locationNameToCode = {};
-
-    if (mapData && mapData.nodes) {
-        for (const id in mapData.nodes) {
-            const name = mapData.nodes[id].name;
-            if (name) {
-                const key = normalizeText(name);
-                nameToIdMap[key] = id;
-            }
-        }
+    function normalizeText(text) {
+        return String(text || '').trim().toLowerCase()
+            .normalize('NFD')
+            .replace(/\p{Diacritic}/gu, '')
+            .replace(/\s+/g, ' ');
     }
 
-    function addLocationMapping(map, key, value) {
-        if (!key || !value) return;
-        if (!map[key]) {
-            map[key] = value;
-            return;
-        }
-        const existing = String(map[key]).split(',').map(item => item.trim()).filter(Boolean);
-        if (!existing.includes(value)) {
-            existing.push(value);
-            map[key] = existing.join(',');
-        }
-    }
+    svgObject.addEventListener("load", async function () {
+        console.log("✅ HỆ THỐNG SẴN SÀNG!");
+        const svgDoc = svgObject.contentDocument;
+        if (!svgDoc) return;
 
-    if (mapData && Array.isArray(mapData.locations)) {
-        for (const loc of mapData.locations) {
-            const locationCode = String(loc.location_code ?? loc.id ?? loc.ID ?? loc.location_id ?? loc.code ?? '').trim();
-            const rawNodeId = String(loc.node_id ?? '').trim();
-            const imageKey = rawNodeId || locationCode;
-            if (!imageKey) continue;
+        const mapData = await fetchMapData();
+        const nameToIdMap = {};
+        const locationNameToCode = {};
 
-            const candidates = [loc.specific_location, loc.name, loc.description, loc.building];
-            for (const item of candidates) {
-                if (item) {
-                    const key = normalizeText(item);
-                    addLocationMapping(locationNameToCode, key, imageKey);
+        if (mapData && mapData.nodes) {
+            for (const id in mapData.nodes) {
+                const name = mapData.nodes[id].name;
+                if (name) {
+                    const key = normalizeText(name);
+                    nameToIdMap[key] = id;
                 }
             }
         }
-    }
 
-    function extractClickText(node) {
-        if (!node) return '';
-        let text = node.textContent ? node.textContent.trim() : '';
-        if (text) return text;
+        function addLocationMapping(map, key, value) {
+            if (!key || !value) return;
+            if (!map[key]) {
+                map[key] = value;
+                return;
+            }
+            const existing = String(map[key]).split(',').map(item => item.trim()).filter(Boolean);
+            if (!existing.includes(value)) {
+                existing.push(value);
+                map[key] = existing.join(',');
+            }
+        }
 
-        const parent = node.closest('g');
-        if (parent && parent !== node) {
-            text = parent.textContent ? parent.textContent.trim() : '';
+        if (mapData && Array.isArray(mapData.locations)) {
+            for (const loc of mapData.locations) {
+                const locationCode = String(loc.location_code ?? loc.id ?? loc.ID ?? loc.location_id ?? loc.code ?? '').trim();
+                const rawNodeId = String(loc.node_id ?? '').trim();
+                const imageKey = rawNodeId || locationCode;
+                if (!imageKey) continue;
+
+                const candidates = [loc.specific_location, loc.name, loc.description, loc.building];
+                for (const item of candidates) {
+                    if (item) {
+                        const key = normalizeText(item);
+                        addLocationMapping(locationNameToCode, key, imageKey);
+                    }
+                }
+            }
+        }
+
+        function extractClickText(node) {
+            if (!node) return '';
+            let text = node.textContent ? node.textContent.trim() : '';
             if (text) return text;
+
+            const parent = node.closest('g');
+            if (parent && parent !== node) {
+                text = parent.textContent ? parent.textContent.trim() : '';
+                if (text) return text;
+            }
+
+            const textChild = node.querySelector && node.querySelector('text');
+            if (textChild) {
+                text = textChild.textContent ? textChild.textContent.trim() : '';
+                if (text) return text;
+            }
+
+            return '';
         }
 
-        const textChild = node.querySelector && node.querySelector('text');
-        if (textChild) {
-            text = textChild.textContent ? textChild.textContent.trim() : '';
-            if (text) return text;
+        function normalizeClickId(id) {
+            if (!id) return '';
+            const raw = String(id).trim();
+            if (!raw) return '';
+            return raw;
         }
 
-        return '';
-    }
+        function extractLocationIdFromText(text) {
+            if (!text) return '';
+            const cleaned = String(text)
+                .replace(/…/g, '.')
+                .replace(/[^\d._]+/g, ' ')
+                .trim();
+            const match = cleaned.match(/(\d+(?:[._]\d+)?)/);
+            return match ? match[1] : '';
+        }
 
-    function normalizeClickId(id) {
-        if (!id) return '';
-        const raw = String(id).trim();
-        if (!raw) return '';
-        return raw;
-    }
+        function resolveDefaultSublocation(id) {
+            if (!id || id.includes('.') || id.includes('_') || !Array.isArray(mapData.locations)) return id;
+            const normalized = String(id).trim();
+            const candidates = mapData.locations
+                .map(loc => String(loc.location_code ?? loc.id ?? loc.ID ?? loc.location_id ?? loc.code ?? '').trim())
+                .filter(code => code.startsWith(`${normalized}.`));
+            if (candidates.includes(`${normalized}.1`)) return `${normalized}.1`;
+            return candidates.length > 0 ? candidates[0] : id;
+        }
 
-    function extractLocationIdFromText(text) {
-        if (!text) return '';
-        const cleaned = String(text)
-            .replace(/…/g, '.')
-            .replace(/[^\d._]+/g, ' ')
-            .trim();
-        const match = cleaned.match(/(\d+(?:[._]\d+)?)/);
-        return match ? match[1] : '';
-    }
+        const elements = svgDoc.querySelectorAll("rect, path, polygon, circle, text, foreignObject, div");
 
-    function resolveDefaultSublocation(id) {
-        if (!id || id.includes('.') || id.includes('_') || !Array.isArray(mapData.locations)) return id;
-        const normalized = String(id).trim();
-        const candidates = mapData.locations
-            .map(loc => String(loc.location_code ?? loc.id ?? loc.ID ?? loc.location_id ?? loc.code ?? '').trim())
-            .filter(code => code.startsWith(`${normalized}.`));
-        if (candidates.includes(`${normalized}.1`)) return `${normalized}.1`;
-        return candidates.length > 0 ? candidates[0] : id;
-    }
+        elements.forEach(el => {
+            el.style.cursor = "pointer";
+            el.addEventListener("click", function (event) {
+                event.stopPropagation();
 
-    const elements = svgDoc.querySelectorAll("rect, path, polygon, circle, text, foreignObject, div");
+                let target = event.target;
+                let textFound = extractClickText(target);
+                let normalizedText = normalizeText(textFound);
+                let buildingId = null;
 
-    elements.forEach(el => {
-        el.style.cursor = "pointer";
-        el.addEventListener("click", function (event) {
-            event.stopPropagation();
-
-            let target = event.target;
-            let textFound = extractClickText(target);
-            let normalizedText = normalizeText(textFound);
-            let buildingId = null;
-
-            if (normalizedText && locationNameToCode[normalizedText]) {
-                buildingId = locationNameToCode[normalizedText];
-            }
-
-            if (!buildingId && normalizedText && nameToIdMap[normalizedText]) {
-                buildingId = nameToIdMap[normalizedText];
-            }
-
-            if (!buildingId) {
-                const elementId = target.id || target.getAttribute && target.getAttribute('id') || '';
-                const normalizedId = normalizeClickId(elementId);
-                if (normalizedId) {
-                    buildingId = normalizedId;
+                if (normalizedText && locationNameToCode[normalizedText]) {
+                    buildingId = locationNameToCode[normalizedText];
                 }
-            }
 
-            if (!buildingId) {
-                const extractedId = extractLocationIdFromText(textFound);
-                if (extractedId) {
-                    buildingId = normalizeClickId(extractedId);
+                if (!buildingId && normalizedText && nameToIdMap[normalizedText]) {
+                    buildingId = nameToIdMap[normalizedText];
                 }
-            }
 
-            if (buildingId) {
-                buildingId = resolveDefaultSublocation(buildingId);
-                console.log("-------------------");
-                console.log(`🎯 Bạn đã click vào khu vực: ${textFound} (ID: ${buildingId})`);
-                showBuildingImages(buildingId);
-            }
+                if (!buildingId) {
+                    const elementId = target.id || target.getAttribute && target.getAttribute('id') || '';
+                    const normalizedId = normalizeClickId(elementId);
+                    if (normalizedId) {
+                        buildingId = normalizedId;
+                    }
+                }
+
+                if (!buildingId) {
+                    const extractedId = extractLocationIdFromText(textFound);
+                    if (extractedId) {
+                        buildingId = normalizeClickId(extractedId);
+                    }
+                }
+
+                if (buildingId) {
+                    buildingId = resolveDefaultSublocation(buildingId);
+                    console.log("-------------------");
+                    console.log(`🎯 Bạn đã click vào khu vực: ${textFound} (ID: ${buildingId})`);
+                    showBuildingImages(buildingId);
+                }
+            });
         });
     });
-});
 
-function showBuildingImages(num) {
-    const modal = document.getElementById('image-modal');
-    const iframe = document.getElementById('modal-iframe');
+    function showBuildingImages(num) {
+        const modal = document.getElementById('image-modal');
+        const iframe = document.getElementById('modal-iframe');
 
-    iframe.src = `chi-tiet-tim-duong.html?id=${num}`;
-    modal.style.display = 'flex';
-}
+        iframe.src = `chi-tiet-tim-duong.html?id=${num}`;
+        modal.style.display = 'flex';
+    }
 
-function closeModal() {
-    const modal = document.getElementById('image-modal');
-    const iframe = document.getElementById('modal-iframe');
+    function closeModal() {
+        const modal = document.getElementById('image-modal');
+        const iframe = document.getElementById('modal-iframe');
 
-    modal.style.display = 'none';
-    iframe.src = '';
-}
-</script>
-<div id="image-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+        modal.style.display = 'none';
+        iframe.src = '';
+    }
+    </script>
     
-    <div style="position: relative; width: 90%; max-width: 900px; height: 85%; background: #000; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;">
-        
-        <button onclick="closeModal()" style="position: absolute; top: 15px; right: 15px; z-index: 1000; width: 40px; height: 40px; border-radius: 50%; background: #ff4757; color: white; border: none; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center;">&times;</button>
-        
-        <iframe id="modal-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-        
+    <div id="image-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+        <div style="position: relative; width: 90%; max-width: 900px; height: 85%; background: #000; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;">
+            <button onclick="closeModal()" style="position: absolute; top: 15px; right: 15px; z-index: 1000; width: 40px; height: 40px; border-radius: 50%; background: #ff4757; color: white; border: none; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center;">&times;</button>
+            <iframe id="modal-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
     </div>
-</div>
 </body>
 
 </html>

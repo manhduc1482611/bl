@@ -391,6 +391,8 @@ window.onload = async () => {
             if (currentPath.length === 0) {
                 alert("Không có đường đi!");
                 videoSection.style.display = 'none';
+                
+                // Trả bản đồ về màn hình chính lớn (bỏ class thu nhỏ)
                 if (videoMapArea) videoMapArea.classList.remove('video-playing');
                 if (btnStart) btnStart.style.display = 'none';
                 return;
@@ -401,8 +403,9 @@ window.onload = async () => {
                 drawMapState(currentPath, currentPath[0], currentPath[1], mapData.nodes, 0);
             }
 
-            // 2. Ẩn khung video đi
+            // 2. Ẩn khung video đi, để lại bản đồ lớn
             videoSection.style.display = 'none';
+            // Trả bản đồ về màn hình chính lớn khi mới ấn Tìm đường
             if (videoMapArea) videoMapArea.classList.remove('video-playing');
             videoEl.pause();
 
@@ -422,6 +425,8 @@ window.onload = async () => {
             videoSection.style.display = 'block';
             videoEl.style.display = 'block';
             videoError.style.display = 'none';
+            
+            // THU NHỎ BẢN ĐỒ VÀO GÓC KHI VIDEO BẮT ĐẦU CHẠY
             if (videoMapArea) videoMapArea.classList.add('video-playing');
 
             // 3. Khởi tạo và chạy video
@@ -660,31 +665,27 @@ if (btnPrevNode && videoEl) {
 }
 
 // =========================================
-// POPUP HƯỚNG DẪN SỬ DỤNG (CHỈ HIỆN 1 LẦN)
-// =========================================
-// =========================================
-// POPUP HƯỚNG DẪN SỬ DỤNG (CHỈ HIỆN 1 LẦN)
-// =========================================
-// =========================================
 // POPUP HƯỚNG DẪN SỬ DỤNG (tạo bằng JS)
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
     const popup = document.getElementById('guide-popup');
     const closeBtn = document.querySelector('.popup-close');
 
-    // 1. Tự động hiện popup khi vào trang
-    // Mình dùng 'flex' để nội dung luôn căn giữa màn hình theo CSS
-    popup.style.display = 'flex';
+    if (popup && closeBtn) {
+        // 1. Tự động hiện popup khi vào trang
+        // Mình dùng 'flex' để nội dung luôn căn giữa màn hình theo CSS
+        popup.style.display = 'flex';
 
-    // 2. Đóng popup khi ấn nút X
-    closeBtn.addEventListener('click', () => {
-        popup.style.display = 'none';
-    });
-
-    // 3. (Tùy chọn) Đóng popup khi click ra ngoài vùng ảnh
-    popup.addEventListener('click', (e) => {
-        if (e.target === popup) {
+        // 2. Đóng popup khi ấn nút X
+        closeBtn.addEventListener('click', () => {
             popup.style.display = 'none';
-        }
-    });
+        });
+
+        // 3. (Tùy chọn) Đóng popup khi click ra ngoài vùng ảnh
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.style.display = 'none';
+            }
+        });
+    }
 });

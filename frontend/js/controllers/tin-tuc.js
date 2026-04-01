@@ -2,10 +2,10 @@
 const danhSachTinTuc = [
     {
         id: "bai-0", // ID để phân biệt các bài
-        tieuDe: "Hội nghị triển khai nhiệm vụ khối năm 2026",
-        ngay: "04/02/2026",
-        luotXem: "520",
-        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-trien-khai-thumb.jpg", 
+        tieuDe: "Gặp mặt chúc mừng ngày Thầy thuốc Việt Nam 27/2",
+        ngay: "27/02/2026",
+        luotXem: "815",
+        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-trien-khai-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Sáng ngày 27/02/2026, tại Hội trường 310A, Học viện Ngân hàng đã tổ chức buổi gặp mặt chúc mừng...",
         blocks: [
     {
@@ -16,8 +16,8 @@ const danhSachTinTuc = [
         `
     },
     {
-        type: "image",
-        url: "../assets/images/pages/tin-tuc/thay-thuoc-1.jpg", 
+        type: "image", // Ảnh hiện ở trang danh sách
+        url: "../assets/images/pages/tin-tuc/thay-thuoc-1.jpg",
         caption: "Toàn cảnh buổi gặp mặt",
     },
     {
@@ -29,7 +29,7 @@ const danhSachTinTuc = [
     },
     {
         type: "image",
-        url: "../assets/images/pages/tin-tuc/thay-thuoc-2.jpg", 
+        url: "../assets/images/pages/tin-tuc/thay-thuoc-2.jpg",
         caption: "PGS.TS. Phạm Thị Hoàng Anh phát biểu chúc mừng tại buổi gặp mặt",
     },
     {
@@ -40,7 +40,7 @@ const danhSachTinTuc = [
     },
     {
         type: "image",
-        url: "../assets/images/pages/tin-tuc/thay-thuoc-3.jpg", 
+        url: "../assets/images/pages/tin-tuc/thay-thuoc-3.jpg",
         caption: "BS. Ngô Thị Liên - Trạm trưởng Trạm Y tế phát biểu cảm ơn tại buổi gặp mặt",
     },
     {
@@ -51,7 +51,7 @@ const danhSachTinTuc = [
     },
     {
         type: "image",
-        url: "../assets/images/pages/tin-tuc/thay-thuoc-4.jpg", 
+        url: "../assets/images/pages/tin-tuc/thay-thuoc-4.jpg",
         caption: "PGS.TS. Phạm Thị Hoàng Anh tặng hoa chúc mừng đội ngũ y, bác sĩ của Học viện",
     },
     {
@@ -63,12 +63,12 @@ const danhSachTinTuc = [
     },
     {
         type: "image",
-        url: "../assets/images/pages/tin-tuc/thay-thuoc-5.jpg", 
+        url: "../assets/images/pages/tin-tuc/thay-thuoc-5.jpg",
         caption: "",
     },
     {
         type: "image",
-        url: "../assets/images/pages/tin-tuc/thay-thuoc-6.jpg", 
+        url: "../assets/images/pages/tin-tuc/thay-thuoc-6.jpg",
         caption: "",
     }
         ]
@@ -78,7 +78,7 @@ const danhSachTinTuc = [
         tieuDe: "Gặp mặt tri ân các đồng chí nguyên lãnh đạo Học viện qua các thời kỳ nhân dịp Tết Nguyên đán Bính Ngọ",
         ngay: "06/02/2026",
         luotXem: "745",
-        anhDaiDien: "../assets/images/pages/tin-tuc/tri-an-thumb.jpg", 
+        anhDaiDien: "../assets/images/pages/tin-tuc/tri-an-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Nhân dịp Tết Nguyên đán Bính Ngọ 2026, Học viện đã tổ chức buổi gặp mặt...",
         blocks: [
     {
@@ -149,7 +149,7 @@ const danhSachTinTuc = [
         tieuDe: "Hội nghị giao ban tập thể lãnh đạo mở rộng Quý I năm 2026",
         ngay: "06/02/2026",
         luotXem: "825",
-        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-thumb.jpg", 
+        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Chiều ngày 06/02/2026, Học viện Ngân hàng tổ chức Hội nghị giao ban tập thể lãnh đạo mở rộng...",
         blocks: [
     {
@@ -228,7 +228,7 @@ const danhSachTinTuc = [
         tieuDe: "Học viện Ngân hàng trao quà Tết cho đoàn viên, người lao động nhân dịp Tết Nguyên đán Bính Ngọ 2026",
         ngay: "06/02/2026",
         luotXem: "791",
-        anhDaiDien: "../assets/images/pages/tin-tuc/qua-tet-thumb.jpg", 
+        anhDaiDien: "../assets/images/pages/tin-tuc/qua-tet-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Nhân dịp Tết Nguyên đán Bính Ngọ 2026, sáng ngày 6/2/2026, Học viện Ngân hàng đã tổ chức hoạt động trao quà Tết...",
         blocks: [
     {
@@ -293,7 +293,7 @@ const danhSachTinTuc = [
         tieuDe: "Hội nghị cán bộ chủ chốt về công tác rà soát, bổ sung quy hoạch nhiệm kỳ 2026 - 2031",
         ngay: "05/02/2026",
         luotXem: "678",
-        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-can-bo-thumb.jpg", 
+        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-can-bo-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Sáng ngày 05/02/2026, tại Trụ sở chính, Học viện Ngân hàng đã tổ chức Hội nghị cán bộ...",
         blocks: [
     {
@@ -369,7 +369,7 @@ const danhSachTinTuc = [
         tieuDe: "Hội nghị triển khai nhiệm vụ khối năm 2026",
         ngay: "04/02/2026",
         luotXem: "520",
-        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-trien-khai-thumb.jpg", 
+        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-trien-khai-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Sáng ngày 04/02/2026, tại Hội trường 310A nhà A1, Học viện Ngân hàng đã tổ chức Hội nghị triển khai nhiệm vụ khối năm 2026...",
         blocks: [
     {
@@ -418,7 +418,7 @@ const danhSachTinTuc = [
         tieuDe: "Hội nghị Tổng kết công tác thi đua, khen thưởng khối thi đua số 6 năm 2025",
         ngay: "30/01/2026",
         luotXem: "606",
-        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-thumb.jpg", 
+        anhDaiDien: "../assets/images/pages/tin-tuc/hoi-nghi-thumb.jpg", // Ảnh hiện ở trang danh sách
         moTaNgan: "Sáng ngày 30/01/2026, tại Hội trường 305.A1, Học viện Ngân hàng (BAV),  Khối thi đua số 6 của Ngân hàng Nhà nước Việt Nam (NHNN) đã tổ chức...",
         blocks: [
     {
@@ -511,17 +511,7 @@ async function getNewsItemById(id) {
 }
 
 function buildNewsCard(item) {
-    let imageUrl = item.anhDaiDien || '../assets/images/pages/tin-tuc/hoi-nghi-thumb.jpg';
-    
-    // Nếu đường dẫn bắt đầu bằng ../assets nhưng file thực tế nằm ở server uploads
-    if (imageUrl.includes('/tin-tuc/')) {
-        const fileName = imageUrl.split('/').pop();
-        // Bạn có thể kiểm tra xem ảnh có phải từ server upload không bằng cách check prefix 'news-'
-        if (fileName.startsWith('news-')) {
-            imageUrl = `http://localhost:3000/api/news-images/${fileName}`;
-        }
-    }
-
+    const imageUrl = item.anhDaiDien || '../assets/images/pages/tin-tuc/hoi-nghi-thumb.jpg';
     const dateLabel = item.ngay ? `<i class="far fa-clock"></i> ${item.ngay}` : '';
     const viewLabel = item.luotXem ? ` &nbsp;&nbsp; <i class="far fa-eye"></i> ${item.luotXem} lượt xem` : '';
 
