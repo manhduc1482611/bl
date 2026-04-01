@@ -17,6 +17,8 @@ const newsUploadPath = path.join(__dirname, '../frontend/assets/images/pages/tin
 
 // Cho phép truy cập thư mục ảnh tòa nhà công khai qua URL
 app.use('/api/location-images', express.static(uploadPath));
+// Cho phép truy cập thư mục ảnh tin tức công khai qua URL
+app.use('/api/news-images', express.static(newsUploadPath));
 
 function ensureUploadPath() {
     if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
