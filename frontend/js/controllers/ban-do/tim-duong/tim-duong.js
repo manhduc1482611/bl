@@ -71,7 +71,6 @@ function getNextTurnInstruction(idx) {
     const curr = String(currentPath[idx + 1]).trim();
     const next = String(currentPath[idx + 2]).trim();
 
-    // CẬP NHẬT: Theo bảng TurnRules / NHAR schema
     const rule = Turn_Rules.find(r =>
         String(r.from_node ?? r.from).trim() === prev &&
         String(r.via_node ?? r.via).trim() === curr &&
@@ -94,6 +93,27 @@ function calculatePathDistance(path, nodes) {
         }
     }
     return totalDist;
+}
+
+// ==========================================
+// HÀM RESET CAMERA BẢN ĐỒ VỀ TRẠNG THÁI GỐC
+// ==========================================
+function resetMapZoom() {
+    const canvas = document.getElementById('mapCanvas');
+    const svgMap = document.getElementById('map-svg');
+    if (canvas && svgMap) {
+        svgMap.style.width = '100%';
+        svgMap.style.height = '100%';
+        svgMap.style.transform = 'translate(0px, 0px) scale(1)';
+        svgMap.style.transformOrigin = 'center center';
+        svgMap.style.transition = 'transform 0.4s ease';
+        
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.transform = 'translate(0px, 0px) scale(1)';
+        canvas.style.transformOrigin = 'center center';
+        canvas.style.transition = 'transform 0.4s ease';
+    }
 }
 
 window.onload = async () => {
@@ -132,13 +152,24 @@ window.onload = async () => {
         }, {});
     }
 
-    // CẬP NHẬT: Tên bảng TurnRules
     Turn_Rules = mapData.TurnRules || mapData.turnRules || [];
+
+    // TÍNH TOÁN BIÊN ĐỘ BẢN ĐỒ ĐỂ TRACKING CAMERA
+    let foundMaxX = 0, foundMaxY = 0;
+    Object.values(mapData.nodes).forEach(n => {
+        const x = parseFloat(n.pos_x ?? n.x ?? n.X ?? 0);
+        const y = parseFloat(n.pos_y ?? n.y ?? n.Y ?? 0);
+        if (x > foundMaxX) foundMaxX = x;
+        if (y > foundMaxY) foundMaxY = y;
+    });
+    window.mapBounds = { 
+        x: foundMaxX > 0 ? foundMaxX : 100, 
+        y: foundMaxY > 0 ? foundMaxY : 100 
+    };
 
     const uniqueLocations = {};
     const detailedLocations = [];
 
-    // 1.1 Lấy tòa nhà chính từ bảng Nodes
     Object.keys(mapData.nodes).forEach(id => {
         const node = mapData.nodes[id];
         const nodeType = (node.node_type ?? node.type ?? '').toLowerCase();
@@ -149,17 +180,15 @@ window.onload = async () => {
         }
     });
 
-    // 1.2 Lấy địa điểm chi tiết từ bảng Locations
     if (mapData.Locations) {
         for (const key in mapData.Locations) {
             const loc = mapData.Locations[key];
-            if (String(loc.type).trim() !== "1") continue; // Chỉ hiển thị Locations type = 1
+            if (String(loc.type).trim() !== "1") continue; 
 
             let buildingIds = (loc.building && uniqueLocations[loc.building])
                 ? uniqueLocations[loc.building].join(',')
                 : key.split('_')[0];
 
-            // CẬP NHẬT: Thuộc tính specific_location
             let displayName = loc.specific_location ?? loc.name ?? loc.description ?? key;
             if (loc.floor && loc.floor !== "none") displayName += ` - ${loc.floor}`;
 
@@ -167,7 +196,6 @@ window.onload = async () => {
         }
     }
 
-    // Đổ danh sách ẩn cho Select Box gốc (để code cũ vẫn chạy được)
     startSel.innerHTML = '<option value="">Chọn điểm xuất phát</option>';
     endSel.innerHTML = '<option value="">Chọn điểm đến</option>';
 
@@ -184,11 +212,8 @@ window.onload = async () => {
         startSel.add(opt1); endSel.add(opt2);
     });
 
-    // ========================================================
-    // HÀM VẼ GIAO DIỆN DROPDOWN TÙY CHỈNH
-    // ========================================================
     function buildCustomDropdown(selectEl, placeholderText) {
-        selectEl.style.display = 'none'; // Giấu select gốc
+        selectEl.style.display = 'none';
 
         const container = document.createElement('div');
         container.className = 'custom-dropdown';
@@ -197,7 +222,6 @@ window.onload = async () => {
         header.className = 'dropdown-header';
         header.innerText = placeholderText;
 
-        // Mở/đóng danh sách
         header.onclick = (e) => {
             e.stopPropagation();
             const isOpen = list.style.display === 'block';
@@ -209,7 +233,6 @@ window.onload = async () => {
         list.className = 'dropdown-list';
         list.style.display = 'none';
 
-        // Lắp ghép các dòng Tòa nhà
         Object.keys(uniqueLocations).forEach(buildingName => {
             const ids = uniqueLocations[buildingName].join(',');
             const roomsInBuilding = detailedLocations.filter(loc => loc.building === buildingName);
@@ -218,7 +241,6 @@ window.onload = async () => {
             const row = document.createElement('div');
             row.className = 'dropdown-row';
 
-            // Chữ tên Tòa Nhà (Bấm vào thì chọn Tòa nhà)
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-name';
             nameSpan.innerHTML = `<i class="fas fa-building" style="color:#f39c12; margin-right:8px;"></i>${buildingName}`;
@@ -229,7 +251,6 @@ window.onload = async () => {
             };
             row.appendChild(nameSpan);
 
-            // NẾU CÓ PHÒNG CON => Hiện thêm Nút mũi tên
             if (roomsInBuilding.length > 0) {
                 const arrow = document.createElement('span');
                 arrow.className = 'toggle-arrow';
@@ -239,7 +260,6 @@ window.onload = async () => {
                 subList.className = 'sub-list';
                 subList.style.display = 'none';
 
-                // Nhét các phòng con vào list phụ
                 roomsInBuilding.forEach(room => {
                     const subLi = document.createElement('li');
                     subLi.innerText = `↳ ${room.name}`;
@@ -252,7 +272,6 @@ window.onload = async () => {
                     subList.appendChild(subLi);
                 });
 
-                // Xử lý nút bấm xổ ra
                 arrow.onclick = (e) => {
                     e.stopPropagation();
                     const isSubOpen = subList.style.display === 'block';
@@ -264,12 +283,11 @@ window.onload = async () => {
                 li.appendChild(row);
                 li.appendChild(subList);
             } else {
-                li.appendChild(row); // Tòa không có phòng con thì chỉ chèn hàng vào thôi
+                li.appendChild(row);
             }
             list.appendChild(li);
         });
 
-        // Click ra ngoài thì tắt Dropdown
         document.addEventListener('click', (e) => {
             if (!container.contains(e.target)) list.style.display = 'none';
         });
@@ -278,13 +296,11 @@ window.onload = async () => {
         container.appendChild(list);
         selectEl.parentNode.insertBefore(container, selectEl.nextSibling);
 
-        // Tạo hàm giúp thanh Tìm kiếm đồng bộ với giao diện mới này
         selectEl.updateCustomHeader = function (name) {
             header.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#e74c3c; margin-right:8px;"></i>${name}`;
         };
     }
 
-    // Gọi hàm vẽ 2 cái dropdown Custom
     buildCustomDropdown(startSel, "Chọn điểm xuất phát");
     buildCustomDropdown(endSel, "Chọn điểm đến");
 
@@ -314,10 +330,16 @@ window.onload = async () => {
             const destName = mapData.nodes[destId]?.name || destId;
             setInstruction(`Đã đến ${destName}`);
 
-            // 1. Phát audio "Đã đến..." và lưu lại biến
-            const arrivalAudio = playArrivalAudio(destName);
+            // NHẢ ZOOM CAMERA VỀ MẶC ĐỊNH
+            resetMapZoom();
 
-            // 2. Chờ audio "Đã đến..." chạy xong thì phát tiếp audio Giới thiệu (ID.mp3)
+            // ==========================================
+            // THÊM 2 DÒNG NÀY ĐỂ TRẢ BẢN ĐỒ VỀ VỊ TRÍ CŨ
+            // ==========================================
+            videoSection.style.display = 'none';
+            if (videoMapArea) videoMapArea.classList.remove('video-playing');
+
+            const arrivalAudio = playArrivalAudio(destName);
             if (arrivalAudio) {
                 arrivalAudio.onended = () => {
                     const introAudio = new Audio(`../../assets/media/pages/ban-do/tim-duong/${destId}.mp3`);
@@ -330,7 +352,6 @@ window.onload = async () => {
                 const modal = document.getElementById('image-modal');
                 const iframe = document.getElementById('modal-iframe');
                 if (modal && iframe) {
-                    // Xóa trạng thái trang cũ để ép JS bên trong khởi tạo lại hoàn toàn
                     iframe.src = 'about:blank';
                     setTimeout(() => {
                         iframe.src = `chi-tiet-tim-duong.html?id=${destId}&t=${Date.now()}`;
@@ -344,7 +365,78 @@ window.onload = async () => {
     videoEl.ontimeupdate = () => {
         if (videoEl.duration) {
             const percent = videoEl.currentTime / videoEl.duration;
-            if (typeof drawMapState === 'function') drawMapState(currentPath, currentPath[currentSegmentIdx], currentPath[currentSegmentIdx + 1], mapData.nodes, percent);
+            if (typeof drawMapState === 'function') {
+                drawMapState(currentPath, currentPath[currentSegmentIdx], currentPath[currentSegmentIdx + 1], mapData.nodes, percent);
+            }
+
+            // ==========================================
+            // LOGIC CAMERA ZOOM VÀ TRACKING THEO CON TRỎ
+            // ==========================================
+            const mapArea = document.querySelector('.video-map-area');
+            const canvas = document.getElementById('mapCanvas');
+            const svgMap = document.getElementById('map-svg');
+            
+            if (mapArea && mapArea.classList.contains('video-playing') && canvas && svgMap) {
+                const u = currentPath[currentSegmentIdx];
+                const v = currentPath[currentSegmentIdx + 1];
+                const n1 = mapData.nodes[u];
+                const n2 = mapData.nodes[v];
+
+                if (n1 && n2 && window.mapBounds && window.mapBaseWidth) {
+                    const x1 = parseFloat(n1.pos_x ?? n1.x ?? n1.X ?? 0);
+                    const y1 = parseFloat(n1.pos_y ?? n1.y ?? n1.Y ?? 0);
+                    const x2 = parseFloat(n2.pos_x ?? n2.x ?? n2.X ?? 0);
+                    const y2 = parseFloat(n2.pos_y ?? n2.y ?? n2.Y ?? 0);
+
+                    const currentX = x1 + (x2 - x1) * percent;
+                    const currentY = y1 + (y2 - y1) * percent;
+
+                    const originX = (currentX / window.mapBounds.x);
+                    const originY = (currentY / window.mapBounds.y);
+
+                    // Tọa độ Pixel thực tế trên bản đồ
+                    const pointX = originX * window.mapBaseWidth;
+                    const pointY = originY * window.mapBaseHeight;
+
+                    const S = 0.75; // Độ zoom (thay đổi to/nhỏ tùy ý)
+                    const cw = 340; // Rộng của mini-map container
+                    const ch = 210; // Cao của mini-map container
+
+                    // Tính độ dịch chuyển để đưa chấm đỏ vào giữa khung hình
+                    let transX = (cw / 2) - (pointX * S);
+                    let transY = (ch / 2) - (pointY * S);
+
+                    const scaledWidth = window.mapBaseWidth * S;
+                    const scaledHeight = window.mapBaseHeight * S;
+
+                    // KHÓA CAMERA: Không cho dịch chuyển quá đà làm hở mảng trắng
+                    if (scaledWidth > cw) {
+                        if (transX > 0) transX = 0;
+                        if (transX < cw - scaledWidth) transX = cw - scaledWidth;
+                    } else {
+                        transX = (cw - scaledWidth) / 2;
+                    }
+                    
+                    if (scaledHeight > ch) {
+                        if (transY > 0) transY = 0;
+                        if (transY < ch - scaledHeight) transY = ch - scaledHeight;
+                    } else {
+                        transY = (ch - scaledHeight) / 2;
+                    }
+
+                    // Áp dụng dịch chuyển và phóng to cho cả SVG lẫn Canvas
+                    const transformStyle = `translate(${transX}px, ${transY}px) scale(${S})`;
+                    const originStyle = `0 0`; // Lấy tâm từ góc trên cùng bên trái
+                    
+                    svgMap.style.transformOrigin = originStyle;
+                    svgMap.style.transform = transformStyle; 
+                    svgMap.style.transition = 'none'; // Bỏ transition để camera di chuyển không bị lag theo video
+
+                    canvas.style.transformOrigin = originStyle;
+                    canvas.style.transform = transformStyle; 
+                    canvas.style.transition = 'none';
+                }
+            }
         }
     };
 
@@ -354,8 +446,6 @@ window.onload = async () => {
         setTimeout(() => { videoEl.onended(); }, 500);
     };
 
-    // --- XỬ LÝ NÚT TÌM ĐƯỜNG ---
-    // --- BƯỚC 1: NÚT TÌM ĐƯỜNG (CHỈ VẼ ĐƯỜNG ĐỎ LÊN BẢN ĐỒ) ---
     document.getElementById('btnFind').onclick = () => {
         const sOption = startSel.options[startSel.selectedIndex];
         const eOption = endSel.options[endSel.selectedIndex];
@@ -391,53 +481,62 @@ window.onload = async () => {
             if (currentPath.length === 0) {
                 alert("Không có đường đi!");
                 videoSection.style.display = 'none';
-                
-                // Trả bản đồ về màn hình chính lớn (bỏ class thu nhỏ)
                 if (videoMapArea) videoMapArea.classList.remove('video-playing');
+                resetMapZoom(); // Nhả zoom
                 if (btnStart) btnStart.style.display = 'none';
                 return;
             }
 
-            // 1. Chỉ vẽ đường lên bản đồ, chưa phát video
             if (typeof drawMapState === 'function') {
-                drawMapState(currentPath, currentPath[0], currentPath[1], mapData.nodes, 0);
+                drawMapState(currentPath, currentPath[currentSegmentIdx], currentPath[currentSegmentIdx + 1], mapData.nodes, 0);
             }
 
-            // 2. Ẩn khung video đi, để lại bản đồ lớn
+            // Ẩn video, trả map về lớn
             videoSection.style.display = 'none';
-            // Trả bản đồ về màn hình chính lớn khi mới ấn Tìm đường
             if (videoMapArea) videoMapArea.classList.remove('video-playing');
             videoEl.pause();
 
-            // 3. Hiện nút "Bắt đầu đi" lên
+            // Nhả zoom trả lại bình thường
+            resetMapZoom();
+
             if (btnStart) btnStart.style.display = 'inline-block';
         }
     };
 
-    // --- BƯỚC 2: NÚT "BẮT ĐẦU ĐI" (PHÁT VIDEO HƯỚNG DẪN) ---
     const btnStartJourney = document.getElementById('btnStartJourney');
     if (btnStartJourney) {
         btnStartJourney.onclick = () => {
-            // 1. Ẩn chính nó đi sau khi bấm
             btnStartJourney.style.display = 'none';
-
-            // 2. Hiện khung video lên
             videoSection.style.display = 'block';
             videoEl.style.display = 'block';
             videoError.style.display = 'none';
             
-            // THU NHỎ BẢN ĐỒ VÀO GÓC KHI VIDEO BẮT ĐẦU CHẠY
+            // --- CỐ ĐỊNH KÍCH THƯỚC BẢN ĐỒ GỐC TRƯỚC KHI THU NHỎ ---
+            const container = document.getElementById('map-container');
+            const svgMap = document.getElementById('map-svg');
+            const canvas = document.getElementById('mapCanvas');
+            
+            if (container && svgMap && canvas) {
+                window.mapBaseWidth = container.clientWidth || 800;
+                window.mapBaseHeight = container.clientHeight || 520;
+                
+                // Ép kích thước bản đồ giữ nguyên để không bị thu nhỏ mảng trắng
+                svgMap.style.width = window.mapBaseWidth + 'px';
+                svgMap.style.height = window.mapBaseHeight + 'px';
+                canvas.style.width = window.mapBaseWidth + 'px';
+                canvas.style.height = window.mapBaseHeight + 'px';
+            }
+
             if (videoMapArea) videoMapArea.classList.add('video-playing');
 
-            // 3. Khởi tạo và chạy video
             for (let k in videoCache) { URL.revokeObjectURL(videoCache[k]); delete videoCache[k]; }
             currentSegmentIdx = 0;
             lastTurnSound = "";
-            playSegment(0); // Gọi hàm phát video
+            playSegment(0);
         };
     }
 
-}; // <-- Đóng lại hàm window.onload cũ
+}; // <-- End window.onload
 
 async function playSegment(index) {
     if (index >= currentPath.length - 1) return;
@@ -534,7 +633,6 @@ window.setSearchAs = function (type, id, name, event) {
     const selectBox = document.getElementById(type);
     if (selectBox) {
         ensureSelectOption(selectBox, id, name);
-        // Gọi hàm update của giao diện custom mà ta đã tạo bên trên
         if (typeof selectBox.updateCustomHeader === 'function') {
             selectBox.updateCustomHeader(name);
         }
@@ -551,7 +649,7 @@ document.addEventListener('click', function (e) {
 });
 
 /* ========================================================
-   TÍNH NĂNG THAM QUAN BẰNG VIDEO (Giữ nguyên)
+   TÍNH NĂNG THAM QUAN BẰNG VIDEO
 ======================================================== */
 const tourData = {
     "toa-nha-d1": { title: "Tòa nhà D1", desc: "Giảng đường chất lượng cao...", video: "../../assets/media/pages/ban-do/tham-quan/d1-tour.mp4" },
@@ -584,23 +682,18 @@ const btnPausePlay = document.getElementById('btnPausePlay');
 
 if (btnPausePlay && videoEl) {
     btnPausePlay.addEventListener('click', function () {
-        // Chỉ cần kiểm tra xem video có đang được gán link (src) hay không
         if (!videoEl.src || videoEl.src === window.location.href) {
             return;
         }
 
         if (videoEl.paused) {
-            // Nếu video đang dừng -> Cho phát tiếp
             videoEl.play();
-            // Đổi lại giao diện nút thành Tạm dừng
             btnPausePlay.innerHTML = '<i class="fas fa-pause"></i> Tạm dừng';
-            btnPausePlay.style.background = '#003478'; // Trả về màu xanh dương mặc định
+            btnPausePlay.style.background = '#003478'; 
         } else {
-            // Nếu video đang phát -> Tạm dừng
             videoEl.pause();
-            // Đổi giao diện nút thành Tiếp tục
             btnPausePlay.innerHTML = '<i class="fas fa-play"></i> Tiếp tục';
-            btnPausePlay.style.background = '#e74c3c'; // Đổi sang màu đỏ để gây chú ý
+            btnPausePlay.style.background = '#e74c3c'; 
         }
     });
 }
@@ -615,33 +708,19 @@ if (btnPrevNode && videoEl) {
             return;
         }
 
-        // 1. Kiểm tra thời gian hiện tại của đoạn video
         if (videoEl.currentTime > 1.5) {
-            // Nếu đã phát > 1.5 giây -> Tua lại về đầu đoạn video hiện tại (ví dụ: đầu F4_F5)
             videoEl.currentTime = 0;
-
-            // Ép video tạm dừng ngay lập tức
             videoEl.pause();
-
-            // Đổi giao diện nút Play/Pause thành "Tiếp tục"
             if (btnPausePlay) {
                 btnPausePlay.innerHTML = '<i class="fas fa-play"></i> Tiếp tục';
-                btnPausePlay.style.background = '#e74c3c'; // Màu đỏ gây chú ý
+                btnPausePlay.style.background = '#e74c3c'; 
             }
         }
         else {
-            // Nếu đang ở đầu video (<= 1.5 giây) -> Lùi về đoạn video trước đó (ví dụ: F3_F4)
             if (currentSegmentIdx > 0) {
-                currentSegmentIdx--; // Lùi index xuống 1
-
-                // Xóa bộ nhớ âm thanh để tránh lỗi phát xong bị lặp lại video cũ
+                currentSegmentIdx--; 
                 lastTurnSound = "";
-
-                // GỌI HÀM PHÁT VIDEO CỦA HỆ THỐNG
                 playSegment(currentSegmentIdx);
-
-                // Dùng setTimeout chờ video mới nạp vào một chút rồi mới ép tạm dừng 
-                // (nếu không video mới load xong sẽ tự chạy tiếp đè lên lệnh pause)
                 setTimeout(function () {
                     videoEl.pause();
                     if (btnPausePlay) {
@@ -649,11 +728,8 @@ if (btnPrevNode && videoEl) {
                         btnPausePlay.style.background = '#e74c3c';
                     }
                 }, 150);
-
             } else {
-                // Nếu đang ở đoạn video đầu tiên của toàn bộ hành trình thì chỉ tua về 0
                 videoEl.currentTime = 0;
-
                 videoEl.pause();
                 if (btnPausePlay) {
                     btnPausePlay.innerHTML = '<i class="fas fa-play"></i> Tiếp tục';
@@ -665,23 +741,17 @@ if (btnPrevNode && videoEl) {
 }
 
 // =========================================
-// POPUP HƯỚNG DẪN SỬ DỤNG (tạo bằng JS)
+// POPUP HƯỚNG DẪN SỬ DỤNG
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
     const popup = document.getElementById('guide-popup');
     const closeBtn = document.querySelector('.popup-close');
 
     if (popup && closeBtn) {
-        // 1. Tự động hiện popup khi vào trang
-        // Mình dùng 'flex' để nội dung luôn căn giữa màn hình theo CSS
         popup.style.display = 'flex';
-
-        // 2. Đóng popup khi ấn nút X
         closeBtn.addEventListener('click', () => {
             popup.style.display = 'none';
         });
-
-        // 3. (Tùy chọn) Đóng popup khi click ra ngoài vùng ảnh
         popup.addEventListener('click', (e) => {
             if (e.target === popup) {
                 popup.style.display = 'none';
