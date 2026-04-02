@@ -204,23 +204,121 @@
     z-index: 1;
 }
 
-/* KHU VỰC THU NHỎ BẢN ĐỒ KHI PHÁT VIDEO */
-/* KHU VỰC THU NHỎ BẢN ĐỒ KHI PHÁT VIDEO */
-/* KHU VỰC THU NHỎ BẢN ĐỒ KHI PHÁT VIDEO */
+/* KHU VỰC THU NHỎ BẢN ĐỒ KHI PHÁT VIDEO - STYLE GAME MINIMAP (CIRCULAR) */
 .video-map-area.video-playing #map-container {
     position: absolute !important;
-    top: 16px !important;
-    left: 16px !important;  /* <--- Đổi thành left để neo sang trái */
-    right: auto !important; /* <--- Thêm dòng này để xóa thuộc tính right cũ đi */
-    width: 340px !important;
-    height: 210px !important;
+    top: 20px !important;
+    left: 20px !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 200px !important;
+    height: 200px !important;
     min-height: auto !important;
     margin-top: 0 !important;
-    border-radius: 16px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    border-radius: 50% !important;
     overflow: hidden;
-    background: #fff;
-    z-index: 99 !important; 
+    z-index: 99 !important;
+    
+    /* Game-style framing */
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 3px solid #00d4ff;
+    box-shadow: 
+        0 0 25px rgba(0, 212, 255, 0.8),
+        0 0 50px rgba(0, 212, 255, 0.4),
+        inset 0 0 25px rgba(255, 255, 255, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Radar scan line animation */
+.video-map-area.video-playing #map-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: radarScan 3s linear infinite;
+    z-index: 10;
+    pointer-events: none;
+}
+
+@keyframes radarScan {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* ========== RESPONSIVE MINIMAP ========== */
+/* Desktop (>= 1024px) */
+@media (min-width: 1024px) {
+    .video-map-area.video-playing #map-container {
+        width: 220px !important;
+        height: 220px !important;
+        top: 20px !important;
+        left: 20px !important;
+        border: 3px solid #00d4ff !important;
+    }
+}
+
+/* Tablet (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .video-map-area.video-playing #map-container {
+        width: 180px !important;
+        height: 180px !important;
+        top: 15px !important;
+        left: 15px !important;
+        border: 2.5px solid #00d4ff !important;
+    }
+    
+    .video-map-area.video-playing #map-container::before {
+        border-width: 1.5px;
+    }
+}
+
+/* Mobile Medium (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    .video-map-area.video-playing #map-container {
+        width: 160px !important;
+        height: 160px !important;
+        top: 12px !important;
+        left: 12px !important;
+        border: 2.5px solid #00d4ff !important;
+        box-shadow: 
+            0 0 20px rgba(0, 212, 255, 0.7),
+            0 0 40px rgba(0, 212, 255, 0.35),
+            inset 0 0 20px rgba(255, 255, 255, 0.07),
+            0 10px 35px rgba(0, 0, 0, 0.45) !important;
+    }
+    
+    .video-map-area.video-playing #map-container::before {
+        border-width: 1.2px;
+    }
+}
+
+/* Mobile Small (< 576px) */
+@media (max-width: 575px) {
+    .video-map-area.video-playing #map-container {
+        width: 150px !important;
+        height: 150px !important;
+        top: 10px !important;
+        left: 10px !important;
+        border: 2px solid #00d4ff !important;
+        box-shadow: 
+            0 0 18px rgba(0, 212, 255, 0.65),
+            0 0 35px rgba(0, 212, 255, 0.3),
+            inset 0 0 18px rgba(255, 255, 255, 0.06),
+            0 8px 30px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    .video-map-area.video-playing #map-container::before {
+        border-width: 0.8px;
+    }
 }
 
 .video-map-area.video-playing .video-container {
@@ -475,17 +573,551 @@
     to { opacity: 1; }
 }
 
-/* 5. Tối ưu cho điện thoại */
-@media (max-width: 768px) {
-    .popup-close {
-        top: -15px;
-        right: 0;
-        width: 35px;
-        height: 35px;
+/* ============================================
+   RESPONSIVE DESIGN - FULL PAGE
+   ============================================ */
+
+/* ===== TABLET (768px - 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .page-title {
+        font-size: 18px;
+        margin-bottom: 8px !important;
+    }
+
+    .controls {
+        padding: 12px;
+        gap: 10px;
+        max-width: 100%;
+    }
+
+    .controls button {
+        padding: 8px 15px;
+        font-size: 13px;
+        height: 38px;
+    }
+
+    .custom-dropdown {
+        min-width: 150px;
+    }
+
+    .dropdown-header {
+        font-size: 13px;
+        height: 38px;
+        padding: 8px 12px;
+    }
+
+    .video-wrapper {
+        height: 300px;
+    }
+
+    .speed-controls {
+        width: 70px;
+        padding: 8px;
+        gap: 3px;
+    }
+
+    .speed-controls span {
+        font-size: 11px;
+    }
+
+    .speed-controls button {
+        padding: 4px 0;
+        font-size: 11px;
+    }
+
+    .video-layout {
+        gap: 15px;
+    }
+
+    .video-main {
+        flex: 1 1 400px;
+        min-width: 250px;
+    }
+
+    #map-container {
+        min-height: 400px;
+    }
+
+    .search-box-wrapper {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    #searchInput {
+        font-size: 13px;
+        padding: 10px 15px 10px 40px;
+    }
+
+    .tour-prompt-overlay {
+        padding: 20px 25px;
+    }
+
+    .tour-prompt-overlay h4 {
+        font-size: 20px;
+    }
+
+    .tour-prompt-overlay p {
+        font-size: 14px;
+    }
+
+    .btn-tour-yes, .btn-tour-no {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .tour-video-box {
+        height: 280px;
+    }
+
+    .tour-info-box {
+        padding: 20px;
+    }
+
+    .tour-info-box h2 {
+        font-size: 22px;
+    }
+
+    .tour-info-box p {
+        font-size: 14px;
+    }
+
+    .tour-module-content {
+        max-width: 90%;
+    }
+}
+
+/* ===== MOBILE MEDIUM (576px - 767px) ===== */
+@media (min-width: 576px) and (max-width: 767px) {
+    .main-content-wrapper {
+        padding-top: 3px !important;
+        padding-bottom: 15px;
+    }
+
+    .page-title {
+        font-size: 16px;
+        margin-bottom: 6px !important;
+    }
+
+    .controls {
+        padding: 10px;
+        gap: 8px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .controls button {
+        padding: 7px 12px;
+        font-size: 12px;
+        height: 40px;
+        flex: 1 1 100%;
+        min-width: 80px;
+    }
+
+    .custom-dropdown {
+        min-width: 100%;
+        flex: 1 1 100%;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-header {
+        font-size: 12px;
+        height: 36px;
+        padding: 7px 10px;
+    }
+
+    .video-wrapper {
+        height: 250px;
+    }
+
+    .speed-controls {
+        width: 60px;
+        padding: 6px;
+        gap: 2px;
+    }
+
+    .speed-controls span {
+        font-size: 10px;
+    }
+
+    .speed-controls button {
+        padding: 3px 0;
+        font-size: 10px;
+    }
+
+    .btn-control {
+        padding: 7px 12px;
+        font-size: 12px;
+        gap: 5px;
+    }
+
+    .video-layout {
+        gap: 10px;
+        flex-direction: column;
+    }
+
+    .video-main {
+        flex: 1 1 auto;
+        min-width: auto;
+    }
+
+    #map-container {
+        min-height: 300px;
+        margin-top: 15px;
+    }
+
+    .search-box-wrapper {
+        max-width: 100%;
+        margin: 0 auto 15px;
+        padding: 0 10px;
+    }
+
+    #searchInput {
+        font-size: 12px;
+        padding: 10px 15px 10px 35px;
+    }
+
+    .search-icon {
+        left: 12px;
+        font-size: 16px;
+    }
+
+    .search-results-list li {
+        padding: 10px 15px;
+    }
+
+    .search-actions {
+        gap: 5px;
+    }
+
+    .btn-set-start, .btn-set-end {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .tour-prompt-overlay {
+        padding: 15px 20px;
+    }
+
+    .tour-prompt-overlay h4 {
         font-size: 18px;
     }
-    
-    .popup-content {
-        max-width: 95%;
+
+    .tour-prompt-overlay p {
+        font-size: 13px;
+    }
+
+    .tour-prompt-btns {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-tour-yes, .btn-tour-no {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+
+    .tour-module-modal {
+        backdrop-filter: blur(3px);
+    }
+
+    .tour-module-content {
+        width: 95%;
+        max-width: 90%;
+        border-radius: 15px;
+    }
+
+    .tour-video-box {
+        height: 220px;
+    }
+
+    .tour-info-box {
+        padding: 15px;
+    }
+
+    .tour-badge {
+        font-size: 11px;
+        padding: 4px 12px;
+    }
+
+    .tour-info-box h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .tour-info-box p {
+        font-size: 13px;
+    }
+
+    .close-tour-modal {
+        font-size: 24px;
+        top: 10px;
+        right: 10px;
+    }
+}
+
+/* ===== MOBILE SMALL (< 576px) ===== */
+@media (max-width: 575px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .main-content-wrapper {
+        padding-top: 2px !important;
+        padding-bottom: 10px;
+    }
+
+    .page-title {
+        font-size: 14px;
+        margin-bottom: 5px !important;
+    }
+
+    .controls {
+        padding: 8px;
+        gap: 5px;
+        margin-bottom: 15px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .controls button {
+        padding: 10px;
+        font-size: 14px;
+        height: 42px;
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .custom-dropdown {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .dropdown-header {
+        font-size: 11px;
+        height: 34px;
+        padding: 6px 8px;
+    }
+
+    .dropdown-list {
+        max-width: 100%;
+        max-height: 200px;
+    }
+
+    .video-wrapper {
+        height: 200px;
+    }
+
+    .guide-video {
+        object-fit: cover;
+    }
+
+    .instruction-overlay {
+        bottom: 10px;
+        padding: 6px 15px;
+        font-size: 14px;
+    }
+
+    .speed-controls {
+        width: 50px;
+        padding: 5px;
+        gap: 2px;
+    }
+
+    .speed-controls span {
+        font-size: 9px;
+    }
+
+    .speed-controls button {
+        padding: 2px 0;
+        font-size: 9px;
+    }
+
+    .btn-control {
+        padding: 6px 10px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    .playback-controls {
+        gap: 8px;
+        padding: 8px;
+        flex-wrap: wrap;
+    }
+
+    .video-layout {
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .video-main {
+        flex: 1 1 auto;
+        min-width: auto;
+    }
+
+    #map-container {
+        min-height: 250px;
+        margin-top: 10px;
+    }
+
+    .search-box-wrapper {
+        max-width: 100%;
+        margin: 0 auto 10px;
+        padding: 0 5px;
+    }
+
+    #searchInput {
+        font-size: 11px;
+        padding: 8px 12px 8px 32px;
+        border-radius: 25px;
+    }
+
+    .search-icon {
+        left: 10px;
+        font-size: 14px;
+    }
+
+    .search-results-list {
+        border-radius: 8px;
+        margin-top: 5px;
+    }
+
+    .search-results-list li {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .search-actions {
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .btn-set-start, .btn-set-end {
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+
+    .tour-prompt-overlay {
+        padding: 12px 15px;
+        border-radius: 8px;
+    }
+
+    .tour-prompt-overlay h4 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .tour-prompt-overlay p {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .tour-prompt-btns {
+        gap: 6px;
+        flex-direction: column;
+    }
+
+    .btn-tour-yes, .btn-tour-no {
+        padding: 7px 12px;
+        font-size: 11px;
+        width: 100%;
+    }
+
+    .tour-module-modal {
+        backdrop-filter: blur(2px);
+    }
+
+    .tour-module-content {
+        width: 98%;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    .tour-video-box {
+        height: 180px;
+    }
+
+    .tour-info-box {
+        padding: 12px;
+    }
+
+    .tour-badge {
+        font-size: 10px;
+        padding: 3px 10px;
+    }
+
+    .tour-info-box h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .tour-info-box p {
+        font-size: 12px;
+    }
+
+    .close-tour-modal {
+        font-size: 20px;
+        top: 8px;
+        right: 8px;
+    }
+
+    .popup-close {
+        top: -12px;
+        right: 0;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .popup-content img {
+        max-height: 70vh;
+        border-width: 2px;
+    }
+}
+
+/* ===== EXTRA SMALL (< 360px) ===== */
+@media (max-width: 359px) {
+    .page-title {
+        font-size: 12px;
+    }
+
+    .controls {
+        padding: 6px;
+        gap: 3px;
+    }
+
+    .controls button {
+        padding: 5px 8px;
+        font-size: 10px;
+        height: 32px;
+    }
+
+    .video-wrapper {
+        height: 160px;
+    }
+
+    .speed-controls {
+        width: 45px;
+        padding: 4px;
+    }
+
+    .speed-controls span {
+        font-size: 8px;
+    }
+
+    .speed-controls button {
+        font-size: 8px;
+    }
+
+    #searchInput {
+        font-size: 10px;
+    }
+
+    .tour-prompt-overlay h4 {
+        font-size: 14px;
+    }
+
+    .tour-prompt-overlay p {
+        font-size: 11px;
     }
 }

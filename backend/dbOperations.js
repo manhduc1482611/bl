@@ -272,12 +272,98 @@ async function deleteNews(id) {
     }
 }
 
+async function getActivityData() {
+    try {
+        const [activities] = await pool.query(
+            `SELECT 
+                h.*,
+                COALESCE(n.name, '') AS tenToa
+             FROM hoatdong h
+             LEFT JOIN Nodes n ON h.Toa = n.id
+             ORDER BY h.MHD DESC`
+        );
+        return activities;
+    } catch (error) {
+        console.error("Lỗi khi truy vấn bảng hoatdong: ", error);
+        throw error;
+    }
+}
+
+async function getActivityById(id) {
+    try {
+        const [rows] = await pool.query(
+            `SELECT 
+                h.*,
+                COALESCE(n.name, '') AS tenToa
+             FROM hoatdong h
+             LEFT JOIN Nodes n ON h.Toa = n.id
+             WHERE h.MHD = ? LIMIT 1`,
+            [id]
+        );
+        return rows[0] || null;
+    } catch (error) {
+        console.error("Lỗi khi truy vấn chi tiết hoạt động: ", error);
+        throw error;
+    }
+}
+
+async function addActivity(data) {
+    try {
+        const { MHD, THD, Time, Phong, Toa, MoTa, Anh } = data;
+        const [result] = await pool.query(
+            `INSERT INTO hoatdong (MHD, THD, Time, Phong, Toa, MoTa, Anh) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [MHD, THD, Time, Phong, Toa, MoTa, Anh]
+        );
+        return result.insertId;
+    } catch (error) {
+        console.error("Lỗi khi thêm hoạt động vào MySQL: ", error);
+        throw error;
+    }
+}
+
+async function updateActivity(id, data) {
+    try {
+        const { THD, Time, Phong, Toa, MoTa, Anh } = data;
+        let sql = `UPDATE hoatdong SET THD = ?, Time = ?, Phong = ?, Toa = ?, MoTa = ?`;
+        let params = [THD, Time, Phong, Toa, MoTa];
+
+        if (Anh !== undefined && Anh !== null) {
+            sql += `, Anh = ?`;
+            params.push(Anh);
+        }
+
+        sql += ` WHERE MHD = ?`;
+        params.push(id);
+
+        await pool.query(sql, params);
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi cập nhật hoạt động trong MySQL: ", error);
+        throw error;
+    }
+}
+
+async function deleteActivity(id) {
+    try {
+        await pool.query(`DELETE FROM hoatdong WHERE MHD = ?`, [id]);
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi xóa hoạt động trong MySQL: ", error);
+        throw error;
+    }
+}
+
 module.exports = { 
     getMapData, 
     getLocationByCode,
     getNewsData, 
     getNewsById, 
-    getAccounts, 
+    getAccounts,
+    getActivityData,
+    getActivityById,
+    addActivity,
+    updateActivity,
+    deleteActivity, 
     updateLocationType, 
     addLocation, 
     updateLocation,

@@ -57,6 +57,7 @@ function loadHeader(rootPath, activePage) {
                 <a href="${rootPath}/pages/gioi-thieu.html" class="${activePage === 'gioi-thieu' ? 'active' : ''}">GIỚI THIỆU</a>
                 <a href="${rootPath}/pages/ban-do/tim-duong.html" class="${activePage === 'ban-do' ? 'active' : ''}">BẢN ĐỒ SỐ</a>
                 <a href="${rootPath}/pages/tin-tuc.html" class="${activePage === 'tin-tuc' ? 'active' : ''}">TIN TỨC</a>
+                <a href="${rootPath}/pages/hoat-dong.html" class="${activePage === 'hoat-dong' ? 'active' : ''}">HOẠT ĐỘNG</a>
                 <a href="${rootPath}/pages/lien-he.html" class="${activePage === 'lien-he' ? 'active' : ''}">LIÊN HỆ</a>
                 <a id="admin-nav-link" href="${rootPath}/pages/admin/admin_map.html" class="${activePage === 'admin' ? 'active' : ''}" style="display: none;">ADMIN</a>
             </div>

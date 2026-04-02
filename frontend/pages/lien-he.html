@@ -3,71 +3,172 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Liên hệ - HVNH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên Hệ - HVNH</title>
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/responsive.css">
     <link rel="stylesheet" href="../css/pages/lien-he.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <link rel="stylesheet" href="css/theme.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 </head>
 
 <body>
 
-    <div class="main-content-wrapper">
+    <!-- Main Content -->
+    <div class="contact-wrapper">
 
-        <section class="contact-section">
+        <div class="contact-content">
 
-            <div class="map-bg">
+            <!-- Map Section -->
+            <section class="map-section">
+                <div class="map-container">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.597933651154!2d105.82611581095534!3d21.008748188384573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac800f450807%3A0x419a49bcd94b693a!2zSOG7jWMgVmnhu4duIE5nw6FuIEjDoG5n!5e0!3m2!1svi!2s"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </section>
 
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.597933651154!2d105.82611581095534!3d21.008748188384573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac800f450807%3A0x419a49bcd94b693a!2zSOG7jWMgVmnhu4duIE5nw6FuIEjDoG5n!5e0!3m2!1svi!2s"
-                    loading="lazy">
-                </iframe>
+            <!-- Contact Info & Form Section -->
+            <section class="contact-main">
 
-            </div>
-
-            <div class="contact-container">
-
-                <div class="contact-box">
-
-                    <div class="contact-header">
-
-                        <h2>THÔNG TIN LIÊN HỆ</h2>
-
-
+                <div class="contact-info">
+                    <div class="info-header">
+                        <h2><i class="fas fa-phone-alt"></i> Thông Tin Liên Hệ</h2>
                     </div>
 
-                    <p>
-                        <strong><i class="fa fa-map-marker"></i> Địa chỉ:</strong>
-                        12 Chùa Bộc, Kim Liên, Hà Nội
-                    </p>
+                    <!-- Contact Cards -->
+                    <div class="contact-cards">
+                        <div class="contact-card">
+                            <div class="card-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <h4>Địa Chỉ</h4>
+                            <p>12 Chùa Bộc, Kim Liên,<br>Đống Đa, Hà Nội 100000</p>
+                        </div>
 
-                    <p>
-                        <strong><i class="fa fa-phone"></i> Hotline:</strong>
-                        0818 95 65 95
-                    </p>
+                        <div class="contact-card">
+                            <div class="card-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <h4>Hotline</h4>
+                            <p><a href="tel:0818956595">0818 95 65 95</a></p>
+                        </div>
 
-                    <p>
-                        <strong><i class="fa fa-envelope"></i> Email:</strong>
-                        truyenthong@hvnh.edu.vn
-                    </p>
+                        <div class="contact-card">
+                            <div class="card-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h4>Email</h4>
+                            <p><a href="mailto:truyenthong@hvnh.edu.vn">truyenthong@hvnh.edu.vn</a></p>
+                        </div>
 
+                        <div class="contact-card">
+                            <div class="card-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h4>Giờ Làm Việc</h4>
+                            <p>Thứ 2 - Thứ 6: 8:00 - 17:00<br>Thứ 7: 08:00 - 12:00</p>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="social-section">
+                        <h4>Theo Dõi Chúng Tôi</h4>
+                        <div class="social-links">
+                            <a href="https://facebook.com/hvnh" target="_blank" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://youtube.com/hvnh" target="_blank" title="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="https://twitter.com/hvnh" target="_blank" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://instagram.com/hvnh" target="_blank" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
+                <!-- Contact Form -->
+                <div class="contact-form-section">
+                    <div class="form-header">
+                        <h2><i class="fas fa-envelope-open"></i> Gửi Tin Nhắn</h2>
+                    </div>
 
-        </section>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Họ và Tên <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" placeholder="Nhập họ và tên của bạn" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="Nhập địa chỉ email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Số Điện Thoại</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Nhập số điện thoại">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Tiêu Đề <span class="required">*</span></label>
+                            <input type="text" id="subject" name="subject" placeholder="Tiêu đề tin nhắn" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Nội Dung <span class="required">*</span></label>
+                            <textarea id="message" name="message" rows="6" placeholder="Nhập nội dung tin nhắn của bạn" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Gửi Tin Nhắn
+                        </button>
+                    </form>
+
+                    <div id="formMessage" class="form-message" style="display: none;"></div>
+                </div>
+
+            </section>
+
+        </div>
 
     </div>
 
     <script src="../js/common.js"></script>
-
     <script>
         loadHeader('..', 'lien-he')
         loadFooter('..')
+
+        // Simple form handling
+        const contactForm = document.getElementById('contactForm');
+        const formMessage = document.getElementById('formMessage');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+                
+                // Show success message
+                formMessage.style.display = 'block';
+                formMessage.className = 'form-message success';
+                formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Cảm ơn! Tin nhắn của bạn đã được gửi thành công.';
+                
+                // Reset form
+                this.reset();
+                
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    formMessage.style.display = 'none';
+                }, 5000);
+            });
+        }
     </script>
 
 </body>

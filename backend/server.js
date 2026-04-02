@@ -3,22 +3,31 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getMapData, getLocationByCode, getNewsData, getNewsById, getAccounts, updateLocationType, addLocation, updateLocation, deleteLocation, addNews, updateNews, deleteNews } = require('./dbOperations');
+const { getMapData, getLocationByCode, getNewsData, getNewsById, getAccounts, getActivityData, getActivityById, addActivity, updateActivity, deleteActivity, updateLocationType, addLocation, updateLocation, deleteLocation, addNews, updateNews, deleteNews } = require('./dbOperations');
 require('dotenv').config();
 
 const app = express();
 
 // Middleware quan trọng
 app.use(cors()); // Cho phép Frontend (VD: Live Server) gọi API không bị chặn lỗi CORS
-app.use(express.json()); 
+app.use(express.json());
+
+// Debug middleware
+app.use((req, res, next) => {
+    console.log('REQUEST:', req.method, req.path);
+    next();
+}); 
 
 const uploadPath = path.join(__dirname, '../frontend/assets/images/pages/ban-do/tim-duong');
 const newsUploadPath = path.join(__dirname, '../frontend/assets/images/pages/tin-tuc');
+const activityUploadPath = path.join(__dirname, '../frontend/assets/images/pages/hoat-dong');
 
 // Cho phép truy cập thư mục ảnh tòa nhà công khai qua URL
 app.use('/api/location-images', express.static(uploadPath));
 // Cho phép truy cập thư mục ảnh tin tức công khai qua URL
 app.use('/api/news-images', express.static(newsUploadPath));
+// Cho phép truy cập thư mục ảnh hoạt động công khai qua URL
+app.use('/api/activity-images', express.static(activityUploadPath));
 
 function ensureUploadPath() {
     if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
@@ -55,6 +64,19 @@ const newsStorage = multer.diskStorage({
     }
 });
 const uploadNews = multer({ storage: newsStorage });
+
+const activityStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (!fs.existsSync(activityUploadPath)) fs.mkdirSync(activityUploadPath, { recursive: true });
+        cb(null, activityUploadPath);
+    },
+    filename: function (req, file, cb) {
+        const timestamp = Date.now();
+        const ext = path.extname(file.originalname) || '.jpg';
+        cb(null, `activity-${timestamp}${ext}`);
+    }
+});
+const uploadActivity = multer({ storage: activityStorage });
 
 // Tạo API Endpoint: Lấy dữ liệu bản đồ
 app.get('/api/map-data', async (req, res) => {
@@ -121,6 +143,35 @@ app.get('/api/accounts', async (req, res) => {
     }
 });
 
+// Tạo API Endpoint: Lấy danh sách hoạt động từ bảng hoatdong
+app.get('/api/activities', async (req, res) => {
+    console.log('🎯 GET /api/activities - ROUTE TRIGGERED');
+    try {
+        console.log('⏳ Fetching activity data...');
+        const activities = await getActivityData();
+        console.log('✅ Activity data fetched, count:', activities.length);
+        res.status(200).json({ activities });
+    } catch (error) {
+        console.error('❌ Lỗi API /api/activities:', error.message);
+        console.error('Stack:', error.stack);
+        res.status(500).json({ error: 'Lỗi Server: Không thể lấy dữ liệu hoạt động.', details: error.message });
+    }
+});
+
+// Tạo API Endpoint: Lấy chi tiết hoạt động theo id
+app.get('/api/activities/:id', async (req, res) => {
+    try {
+        const activity = await getActivityById(req.params.id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Không tìm thấy hoạt động.' });
+        }
+        res.status(200).json({ activity });
+    } catch (error) {
+        console.error('Lỗi API /api/activities/:id:', error);
+        res.status(500).json({ error: 'Lỗi Server: Không thể lấy chi tiết hoạt động.' });
+    }
+});
+
 // API Endpoint: Thêm tin tức mới
 app.post('/api/news', uploadNews.single('anhDaiDien'), async (req, res) => {
     try {
@@ -163,6 +214,75 @@ app.delete('/api/news/:id', async (req, res) => {
     } catch (error) {
         console.error("Lỗi API DELETE /api/news/:id:", error);
         res.status(500).json({ error: "Lỗi Server: Không thể xóa tin tức." });
+    }
+});
+
+// API Endpoint: Thêm hoạt động mới
+app.post('/api/activities', uploadActivity.single('Anh'), async (req, res) => {
+    try {
+        console.log('POST /api/activities - req.body:', req.body);
+        console.log('POST /api/activities - req.file:', req.file);
+        
+        const activityData = {
+            MHD: req.body.MHD,
+            THD: req.body.THD,
+            Time: req.body.Time,
+            Phong: req.body.Phong,
+            Toa: req.body.Toa,
+            MoTa: req.body.MoTa,
+            Anh: req.file ? `../assets/images/pages/hoat-dong/${req.file.filename}` : null
+        };
+        console.log('Activity data to insert:', activityData);
+        
+        const id = await addActivity(activityData);
+        res.status(201).json({ message: "Thêm hoạt động thành công", id });
+    } catch (error) {
+        console.error("Lỗi API POST /api/activities:", error);
+        res.status(500).json({ error: "Lỗi Server: Không thể thêm hoạt động." });
+    }
+});
+
+// API Endpoint: Cập nhật hoạt động
+app.put('/api/activities/:id', uploadActivity.single('Anh'), async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log('PUT /api/activities/:id - ID:', id);
+        console.log('PUT /api/activities/:id - req.body:', req.body);
+        console.log('PUT /api/activities/:id - req.file:', req.file);
+        
+        const activity = await getActivityById(id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Không tìm thấy hoạt động.' });
+        }
+
+        const activityData = {
+            MHD: req.body.MHD,
+            THD: req.body.THD,
+            Time: req.body.Time,
+            Phong: req.body.Phong,
+            Toa: req.body.Toa,
+            MoTa: req.body.MoTa,
+            Anh: req.file ? `../assets/images/pages/hoat-dong/${req.file.filename}` : activity.Anh
+        };
+        console.log('Activity data to update:', activityData);
+        
+        await updateActivity(id, activityData);
+        res.status(200).json({ message: "Cập nhật hoạt động thành công" });
+    } catch (error) {
+        console.error("Lỗi API PUT /api/activities/:id:", error);
+        res.status(500).json({ error: "Lỗi Server: Không thể cập nhật hoạt động." });
+    }
+});
+
+// API Endpoint: Xóa hoạt động
+app.delete('/api/activities/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        await deleteActivity(id);
+        res.status(200).json({ message: "Xóa hoạt động thành công" });
+    } catch (error) {
+        console.error("Lỗi API DELETE /api/activities/:id:", error);
+        res.status(500).json({ error: "Lỗi Server: Không thể xóa hoạt động." });
     }
 });
 

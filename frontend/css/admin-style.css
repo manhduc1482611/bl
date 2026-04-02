@@ -1,42 +1,127 @@
-/* Giao diện Admin Hiện đại - HVNH Digital Map */
+/* =========================================
+   FILE: css/admin-style.css
+   MÔ TẢ: CSS ADMIN - ĐỒNG BỘ VỚI STYLE.CSS
+========================================= */
 
-.admin-container {
-    margin-top: 40px;
-    margin-bottom: 50px;
-    background: #fff;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 52, 120, 0.08);
-    border: 1px solid #edf2f7;
+/* CSS Variables & Theme */
+:root {
+    --primary-color: #003478;
+    --primary-dark: #002c60;
+    --accent-color: #f39c12;
+    --accent-dark: #e87e0a;
+    --text-dark: #1e293b;
+    --text-light: #4a5568;
+    --text-muted: #718096;
+    --bg-light: #f8fafc;
+    --bg-lighter: #f4f7f6;
+    --bg-light-hover: #e8f1f8;
+    --border-color: #e2e8f0;
+    --border-light: #edf2f7;
+    --success-color: #27ae60;
+    --success-dark: #229954;
+    --danger-color: #e74c3c;
+    --danger-dark: #c0392b;
+    --status-active-bg: #def7ec;
+    --status-active-color: #03543f;
+    --font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 52, 120, 0.08);
+    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
 }
 
+/* Base Typography & Layout */
+body, html {
+    font-family: var(--font-family);
+    color: var(--text-dark);
+    background-color: var(--bg-lighter);
+    margin: 0;
+    padding: 0;
+}
+
+/* Admin Main Wrapper */
+.admin-main-wrapper {
+    width: 90%;
+    max-width: 1800px;
+    margin: 0 auto;
+    background: #fff;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-radius: 0;
+}
+
+.admin-container {
+    width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    margin-top: 40px;
+    margin-bottom: 50px;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+}
+
+/* Admin Header Section */
 .admin-header {
     display: flex;
     flex-direction: column;
-    border-left: 5px solid #f39c12;
+    border-left: 5px solid var(--accent-color);
+    padding: 30px;
     padding-left: 20px;
-    margin-bottom: 35px;
+    margin: 0 0 30px 0;
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
 }
 
-.admin-header h2 { 
-    color: #003478; 
-    margin: 0; 
-    font-size: 24px; 
+.admin-header h2 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 24px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.admin-header p { 
-    color: #718096; 
-    font-size: 15px; 
+.admin-header h2 i {
+    color: var(--accent-color);
+}
+
+.admin-header p {
+    color: var(--text-muted);
+    font-size: 15px;
     margin-top: 8px;
+    margin-bottom: 0;
 }
 
+.admin-header > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Admin Content Box */
+.admin-content-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+}
+
+/* Table Styling */
 .table-responsive {
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 .admin-table {
@@ -44,10 +129,11 @@
     border-collapse: collapse;
     font-size: 15px;
     background-color: white;
+    font-family: var(--font-family);
 }
 
 .admin-table th {
-    background: #003478;
+    background: var(--primary-color);
     color: #ffffff;
     text-align: left;
     padding: 18px 20px;
@@ -59,8 +145,8 @@
 
 .admin-table td {
     padding: 16px 20px;
-    border-bottom: 1px solid #edf2f7;
-    color: #2d3748;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-dark);
     vertical-align: middle;
 }
 
@@ -69,7 +155,7 @@
 }
 
 .admin-table tr:hover {
-    background-color: #f7fafc;
+    background-color: var(--bg-light);
 }
 
 .td-desc {
@@ -77,10 +163,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #718096;
+    color: var(--text-muted);
     font-size: 14px;
 }
 
+/* Status Select */
 .status-select {
     padding: 8px 12px;
     border-radius: 8px;
@@ -97,11 +184,23 @@
     padding-right: 30px;
 }
 
-/* Màu sắc cho trạng thái */
-.status-select.active { background-color: #def7ec; color: #03543f; }
-.status-select.hidden { background-color: #f3f4f6; color: #4b5563; }
-.status-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2); border-color: #f39c12; }
+.status-select.active {
+    background-color: #def7ec;
+    color: #03543f;
+}
 
+.status-select.hidden {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.status-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+    border-color: var(--accent-color);
+}
+
+/* Toast Notification */
 .admin-toast {
     position: fixed;
     bottom: 30px;
@@ -110,14 +209,138 @@
     color: white;
     padding: 12px 24px;
     border-radius: 10px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-lg);
     z-index: 10001;
     animation: slideIn 0.3s ease-out;
     font-weight: 500;
-    border-left: 4px solid #f39c12;
+    border-left: 4px solid var(--accent-color);
 }
 
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN - ADMIN PAGES
+===================================================== */
+
+/* Tablet */
+@media (max-width: 992px) {
+    .admin-main-wrapper {
+        width: 100%;
+    }
+
+    .admin-header div {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+
+    .admin-header .btn-add {
+        width: 100% !important;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table td,
+    .admin-table th {
+        padding: 12px 15px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .admin-main-wrapper {
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .admin-container {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin-top: 20px !important;
+        margin-bottom: 30px !important;
+    }
+
+    .admin-header {
+        padding: 20px !important;
+        margin: 0 0 20px 0 !important;
+        border-left: 4px solid #f39c12;
+        padding-left: 15px !important;
+    }
+
+    .admin-header h2 {
+        font-size: 18px !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .admin-header h2 i {
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;
+    }
+
+    .admin-header div {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+
+    .admin-header .btn-add {
+        width: 100% !important;
+    }
+
+    .admin-content-box {
+        padding: 20px !important;
+        border-radius: 8px !important;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table {
+        font-size: 13px;
+    }
+
+    .admin-table th {
+        padding: 12px 10px !important;
+        font-size: 11px !important;
+    }
+
+    .admin-table td {
+        padding: 10px 8px !important;
+        font-size: 12px !important;
+    }
+
+    .td-desc {
+        max-width: 200px;
+    }
+
+    .status-select {
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+    }
+
+    .admin-tabs {
+        gap: 10px !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .admin-tabs .tab-item {
+        padding: 8px 15px !important;
+        font-size: 13px !important;
+    }
+
+    .search-container {
+        max-width: 100% !important;
+    }
 }

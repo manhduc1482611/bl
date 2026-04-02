@@ -3,6 +3,84 @@
  * CHỨC NĂNG: Lấy dữ liệu bản đồ từ Server Node.js (Cổng 3000) -> Trả về JSON cho thuật toán Dijkstra
  */
 
+/**
+ * API Client class for making HTTP requests
+ */
+class ApiClient {
+    constructor(baseUrl = 'http://localhost:3000') {
+        this.baseUrl = baseUrl;
+    }
+
+    async get(endpoint) {
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('Not found');
+                }
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`API Error (GET ${endpoint}):`, error);
+            throw error;
+        }
+    }
+
+    async post(endpoint, data) {
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`API Error (POST ${endpoint}):`, error);
+            throw error;
+        }
+    }
+
+    async put(endpoint, data) {
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`API Error (PUT ${endpoint}):`, error);
+            throw error;
+        }
+    }
+
+    async delete(endpoint) {
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`API Error (DELETE ${endpoint}):`, error);
+            throw error;
+        }
+    }
+}
+
 async function fetchMapData() {
     try {
         // Gọi thẳng vào API Node.js đang chạy ở cổng 3000
