@@ -173,6 +173,7 @@
     display: flex;
     align-items: flex-start;
     gap: 20px;
+    justify-content: center; /* Căn giữa nội dung video và thanh tốc độ */
     flex-wrap: wrap;
 }
 
@@ -607,12 +608,13 @@
     }
 
     .video-wrapper {
-        height: 300px;
+        height: 280px; /* Phóng to khung video trên điện thoại nhỏ */
     }
 
     .speed-controls {
         width: 70px;
         padding: 8px;
+        align-self: center;
         gap: 3px;
     }
 
@@ -726,12 +728,13 @@
     }
 
     .video-wrapper {
-        height: 250px;
+        height: 320px; /* Phóng to khung video trên Tablet/Mobile Medium */
     }
 
     .speed-controls {
         width: 60px;
         padding: 6px;
+        align-self: center; /* Căn giữa thanh tốc độ khi xuống hàng */
         gap: 2px;
     }
 
@@ -753,10 +756,12 @@
     .video-layout {
         gap: 10px;
         flex-direction: column;
+        align-items: center; /* Đưa toàn bộ nội dung vào giữa */
     }
 
     .video-main {
-        flex: 1 1 auto;
+        flex: 1 1 100%;
+        width: 100%;
         min-width: auto;
     }
 
@@ -947,11 +952,12 @@
     .video-layout {
         gap: 8px;
         flex-direction: column;
-        align-items: stretch;
+        align-items: center; /* Căn giữa video trên màn hình nhỏ nhất */
     }
 
     .video-main {
-        flex: 1 1 auto;
+        flex: 1 1 100%;
+        width: 100%;
         min-width: auto;
     }
 
@@ -1110,6 +1116,17 @@
     }
 
     #searchInput {
+        font-size: 10px;
+    }
+
+    .tour-prompt-overlay h4 {
+        font-size: 14px;
+    }
+
+    .tour-prompt-overlay p {
+        font-size: 11px;
+    }
+}
         font-size: 10px;
     }
 

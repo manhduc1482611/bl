@@ -399,8 +399,9 @@ window.onload = async () => {
                     const pointY = originY * window.mapBaseHeight;
 
                     const S = 0.75; // Độ zoom (thay đổi to/nhỏ tùy ý)
-                    const cw = 340; // Rộng của mini-map container
-                    const ch = 210; // Cao của mini-map container
+                    const mapCont = document.getElementById('map-container');
+                    const cw = mapCont ? mapCont.clientWidth : 200; 
+                    const ch = mapCont ? mapCont.clientHeight : 200;
 
                     // Tính độ dịch chuyển để đưa chấm đỏ vào giữa khung hình
                     let transX = (cw / 2) - (pointX * S);
