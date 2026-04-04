@@ -236,11 +236,24 @@ async function deleteLocation(locationCode) {
 
 async function addNews(data) {
     try {
-        const { tieuDe, ngay, anhDaiDien, moTaNgan, blocks } = data;
-        const [result] = await pool.query(
-            `INSERT INTO tintuc (tieuDe, ngay, anhDaiDien, moTaNgan, blocks) VALUES (?, ?, ?, ?, ?)`,
-            [tieuDe, ngay, anhDaiDien, moTaNgan, JSON.stringify(blocks || [])]
-        );
+        // Extract basic fields
+        const { tieuDe, ngay, anhDaiDien, noiDung } = data;
+        
+        // Build dynamic SET clause
+        let setClause = 'tieuDe = ?, ngay = ?, anhDaiDien = ?, noiDung = ?';
+        let values = [tieuDe, ngay, anhDaiDien, noiDung || null];
+        
+        // Add ct and img fields
+        for (let i = 1; i <= 20; i++) {
+            const ctKey = `ct${i}`;
+            const imgKey = `img${i}`;
+            
+            setClause += `, ${ctKey} = ?, ${imgKey} = ?`;
+            values.push(data[ctKey] || null, data[imgKey] || null);
+        }
+        
+        const query = `INSERT INTO tintuc SET ${setClause}`;
+        const [result] = await pool.query(query, values);
         return result.insertId;
     } catch (error) {
         console.error("Lỗi khi thêm tin tức vào MySQL: ", error);
@@ -250,11 +263,26 @@ async function addNews(data) {
 
 async function updateNews(id, data) {
     try {
-        const { tieuDe, ngay, anhDaiDien, moTaNgan, blocks } = data;
-        await pool.query(
-            `UPDATE tintuc SET tieuDe = ?, ngay = ?, anhDaiDien = ?, moTaNgan = ?, blocks = ? WHERE id = ?`,
-            [tieuDe, ngay, anhDaiDien, moTaNgan, JSON.stringify(blocks || []), id]
-        );
+        // Extract basic fields
+        const { tieuDe, ngay, anhDaiDien, noiDung } = data;
+        
+        // Build dynamic SET clause
+        let setClause = 'tieuDe = ?, ngay = ?, anhDaiDien = ?, noiDung = ?';
+        let values = [tieuDe, ngay, anhDaiDien, noiDung || null];
+        
+        // Add ct and img fields
+        for (let i = 1; i <= 20; i++) {
+            const ctKey = `ct${i}`;
+            const imgKey = `img${i}`;
+            
+            setClause += `, ${ctKey} = ?, ${imgKey} = ?`;
+            values.push(data[ctKey] || null, data[imgKey] || null);
+        }
+        
+        values.push(id); // Add id for WHERE clause
+        
+        const query = `UPDATE tintuc SET ${setClause} WHERE id = ?`;
+        await pool.query(query, values);
         return true;
     } catch (error) {
         console.error("Lỗi khi cập nhật tin tức trong MySQL: ", error);
@@ -327,7 +355,8 @@ async function updateActivity(id, data) {
         let sql = `UPDATE hoatdong SET THD = ?, Time = ?, Phong = ?, Toa = ?, MoTa = ?`;
         let params = [THD, Time, Phong, Toa, MoTa];
 
-        if (Anh !== undefined && Anh !== null) {
+        // Chỉ cần khác undefined là thực hiện cập nhật (để chấp nhận giá trị null)
+        if (Anh !== undefined) {
             sql += `, Anh = ?`;
             params.push(Anh);
         }

@@ -1,6 +1,7 @@
 const API_BASE = 'http://localhost:3000/api';
 let allLocations = []; // Biến lưu trữ cục bộ để truy xuất dữ liệu khi nhấn "Sửa"
 let selectedImageFile = null;
+let isImageRemoved = false; // Theo dõi việc xóa ảnh hiện tại
 let buildingNodeMap = {}; // Map từ building -> node_id tự động
 let editingOriginalCode = null; // Lưu mã gốc khi đang chỉnh sửa
 
@@ -44,10 +45,15 @@ document.addEventListener('DOMContentLoaded', async function () {
 function initImageUpload() {
     const dropZone = document.getElementById('image-drop-zone');
     const fileInput = document.getElementById('edit-image-input');
+    const changeBtn = document.getElementById('btn-change-image');
 
     if (!dropZone || !fileInput) return;
 
     dropZone.onclick = () => fileInput.click();
+
+    if (changeBtn) {
+        changeBtn.onclick = () => fileInput.click();
+    }
 
     fileInput.onchange = (e) => handleFiles(e.target.files);
 
@@ -67,19 +73,25 @@ function handleFiles(files) {
     if (!file.type.startsWith('image/')) return alert('Vui lòng chỉ chọn file ảnh!');
 
     selectedImageFile = file;
+    isImageRemoved = false; // Reset cờ xóa khi đã chọn file mới
     const reader = new FileReader();
     reader.onload = (e) => {
         const preview = document.getElementById('image-preview');
         preview.src = e.target.result;
         document.getElementById('image-preview-container').style.display = 'block';
+        const dropZone = document.getElementById('image-drop-zone');
+        if (dropZone) dropZone.style.display = 'none';
     };
     reader.readAsDataURL(file);
 }
 
 function removeSelectedImage() {
     selectedImageFile = null;
+    isImageRemoved = true; // Đánh dấu là muốn xóa ảnh khỏi server
     document.getElementById('edit-image-input').value = '';
     document.getElementById('image-preview-container').style.display = 'none';
+    const dropZone = document.getElementById('image-drop-zone');
+    if (dropZone) dropZone.style.display = 'block';
 }
 
 async function loadLocationList() {
@@ -219,6 +231,7 @@ async function updateSearchType(code, value, selectEl) {
 // Hàm mở Modal để thêm địa điểm mới
 function openAddModal() {
     editingOriginalCode = null;
+    isImageRemoved = false;
     const codeInput = document.getElementById('edit-location-code');
     if (codeInput) {
         codeInput.value = '';
@@ -236,6 +249,8 @@ function openAddModal() {
     document.getElementById('edit-floor').value = '';
     document.getElementById('edit-description').value = '';
     document.getElementById('image-preview-container').style.display = 'none';
+    const dropZone = document.getElementById('image-drop-zone');
+    if (dropZone) dropZone.style.display = 'block';
     
     const modalTitle = document.querySelector('#edit-modal h3');
     if (modalTitle) modalTitle.innerText = 'Thêm địa điểm mới';
@@ -249,6 +264,7 @@ function openEditModal(code) {
     if (!loc) return;
 
     editingOriginalCode = code;
+    isImageRemoved = false;
     const codeInput = document.getElementById('edit-location-code');
     if (codeInput) {
         codeInput.value = loc.location_code;
@@ -259,12 +275,17 @@ function openEditModal(code) {
     
     // Hiển thị ảnh hiện tại từ thư mục tim-duong dựa trên cột image trong DB
     const preview = document.getElementById('image-preview');
+    const dropZone = document.getElementById('image-drop-zone');
+    const previewContainer = document.getElementById('image-preview-container');
+
     if (loc.image) {
         preview.src = `../../assets/images/pages/ban-do/tim-duong/${loc.image}?t=${Date.now()}`;
-        document.getElementById('image-preview-container').style.display = 'block';
-        preview.onerror = () => { document.getElementById('image-preview-container').style.display = 'none'; };
+        previewContainer.style.display = 'block';
+        if (dropZone) dropZone.style.display = 'none';
+        preview.onerror = () => { previewContainer.style.display = 'none'; if (dropZone) dropZone.style.display = 'block'; };
     } else {
-        document.getElementById('image-preview-container').style.display = 'none';
+        previewContainer.style.display = 'none';
+        if (dropZone) dropZone.style.display = 'block';
     }
 
     const deleteBtn = document.getElementById('btn-delete-location');
@@ -316,6 +337,11 @@ async function saveLocation(event) {
     formData.append('floor', floor);
     formData.append('description', description);
     formData.append('location_code', code);
+
+    // Gửi tín hiệu xóa ảnh nếu người dùng nhấn nút Xóa
+    if (isImageRemoved) {
+        formData.append('removeImage', 'true');
+    }
 
     // Gửi file ảnh nếu có chọn mới
     if (selectedImageFile) {

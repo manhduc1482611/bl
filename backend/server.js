@@ -71,12 +71,28 @@ const activityStorage = multer.diskStorage({
         cb(null, activityUploadPath);
     },
     filename: function (req, file, cb) {
-        const timestamp = Date.now();
-        const ext = path.extname(file.originalname) || '.jpg';
-        cb(null, `activity-${timestamp}${ext}`);
+        // Lấy MHD từ body (ưu tiên) hoặc params để đặt tên file
+        const rawId = req.body.MHD || req.params.id || Date.now().toString();
+        const mhd = sanitizeFileName(rawId);
+        // Ép tên file luôn là {MHD}.jpg để khớp với logic lưu cột Anh
+        cb(null, `${mhd}.jpg`);
     }
 });
 const uploadActivity = multer({ storage: activityStorage });
+
+const contentImageStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (!fs.existsSync(newsUploadPath)) fs.mkdirSync(newsUploadPath, { recursive: true });
+        cb(null, newsUploadPath);
+    },
+    filename: function (req, file, cb) {
+        const timestamp = Date.now();
+        const random = Math.floor(Math.random() * 1000);
+        const ext = path.extname(file.originalname) || '.jpg';
+        cb(null, `content-${timestamp}-${random}${ext}`);
+    }
+});
+const uploadContentImage = multer({ storage: contentImageStorage });
 
 // Tạo API Endpoint: Lấy dữ liệu bản đồ
 app.get('/api/map-data', async (req, res) => {
@@ -173,13 +189,22 @@ app.get('/api/activities/:id', async (req, res) => {
 });
 
 // API Endpoint: Thêm tin tức mới
-app.post('/api/news', uploadNews.single('anhDaiDien'), async (req, res) => {
+app.post('/api/news', uploadNews.any(), async (req, res) => {
     try {
-        const newsData = {
-            ...req.body,
-            anhDaiDien: req.file ? `../assets/images/pages/tin-tuc/${req.file.filename}` : req.body.anhDaiDien,
-            blocks: req.body.blocks ? JSON.parse(req.body.blocks) : []
-        };
+        const newsData = { ...req.body };
+        
+        // Xử lý các file được upload (anhDaiDien và các img1, img2...)
+        if (req.files && Array.isArray(req.files)) {
+            req.files.forEach(file => {
+                // Chỉ lưu tên file vào database để frontend tự nối path
+                if (file.fieldname === 'anhDaiDien') {
+                    newsData.anhDaiDien = file.filename;
+                } else if (file.fieldname.startsWith('img')) {
+                    newsData[file.fieldname] = file.filename;
+                }
+            });
+        }
+        
         const id = await addNews(newsData);
         res.status(201).json({ message: "Thêm tin tức thành công", id });
     } catch (error) {
@@ -189,14 +214,22 @@ app.post('/api/news', uploadNews.single('anhDaiDien'), async (req, res) => {
 });
 
 // API Endpoint: Cập nhật tin tức
-app.put('/api/news/:id', uploadNews.single('anhDaiDien'), async (req, res) => {
+app.put('/api/news/:id', uploadNews.any(), async (req, res) => {
     try {
         const id = req.params.id;
-        const newsData = {
-            ...req.body,
-            anhDaiDien: req.file ? `../assets/images/pages/tin-tuc/${req.file.filename}` : req.body.anhDaiDien,
-            blocks: req.body.blocks ? JSON.parse(req.body.blocks) : []
-        };
+        const newsData = { ...req.body };
+        
+        // Xử lý các file được upload (anhDaiDien và các img1, img2...)
+        if (req.files && Array.isArray(req.files)) {
+            req.files.forEach(file => {
+                if (file.fieldname === 'anhDaiDien') {
+                    newsData.anhDaiDien = file.filename;
+                } else if (file.fieldname.startsWith('img')) {
+                    newsData[file.fieldname] = file.filename;
+                }
+            });
+        }
+        
         await updateNews(id, newsData);
         res.status(200).json({ message: "Cập nhật tin tức thành công" });
     } catch (error) {
@@ -217,6 +250,43 @@ app.delete('/api/news/:id', async (req, res) => {
     }
 });
 
+// API Endpoint: Upload ảnh cho nội dung tin tức
+app.post('/api/upload-news-image', uploadNews.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Không có file ảnh được upload' });
+        }
+
+        // Trả về URL của ảnh đã upload
+        const imageUrl = `/api/news-images/${req.file.filename}`;
+        res.status(200).json({ 
+            message: 'Upload ảnh thành công',
+            imageUrl: imageUrl,
+            filename: req.file.filename
+        });
+    } catch (error) {
+        console.error('Lỗi upload ảnh nội dung:', error);
+        res.status(500).json({ error: 'Lỗi server khi upload ảnh' });
+    }
+});
+
+// API Endpoint: Upload ảnh cho nội dung chi tiết tin tức
+app.post('/api/upload/content-image', uploadContentImage.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Không có file ảnh được upload' });
+        }
+
+        res.status(200).json({ 
+            message: 'Upload ảnh nội dung thành công',
+            filename: req.file.filename
+        });
+    } catch (error) {
+        console.error('Lỗi upload ảnh nội dung chi tiết:', error);
+        res.status(500).json({ error: 'Lỗi server khi upload ảnh nội dung' });
+    }
+});
+
 // API Endpoint: Thêm hoạt động mới
 app.post('/api/activities', uploadActivity.single('Anh'), async (req, res) => {
     try {
@@ -230,7 +300,7 @@ app.post('/api/activities', uploadActivity.single('Anh'), async (req, res) => {
             Phong: req.body.Phong,
             Toa: req.body.Toa,
             MoTa: req.body.MoTa,
-            Anh: req.file ? `../assets/images/pages/hoat-dong/${req.file.filename}` : null
+            Anh: req.file ? req.file.filename : null
         };
         console.log('Activity data to insert:', activityData);
         
@@ -252,7 +322,37 @@ app.put('/api/activities/:id', uploadActivity.single('Anh'), async (req, res) =>
         
         const activity = await getActivityById(id);
         if (!activity) {
+            // Nếu có file vừa upload mà không tìm thấy record, xóa file để tránh rác
+            if (req.file) {
+                const uploadedPath = path.join(activityUploadPath, req.file.filename);
+                if (fs.existsSync(uploadedPath)) fs.unlinkSync(uploadedPath);
+            }
             return res.status(404).json({ error: 'Không tìm thấy hoạt động.' });
+        }
+
+        let filenameToSave = activity.Anh;
+
+        // Xử lý xóa ảnh cũ hoặc cập nhật ảnh mới
+        if (req.body.removeImage === 'true') {
+            // Trường hợp 1: Người dùng chủ động nhấn nút "Xóa ảnh"
+            if (activity.Anh) {
+                const oldPath = path.join(activityUploadPath, activity.Anh);
+                try {
+                    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+                    console.log(`🗑️ Đã xóa file ảnh vật lý: ${activity.Anh}`);
+                } catch (err) {
+                    console.error("Lỗi khi xóa ảnh vật lý:", err);
+                }
+            }
+            filenameToSave = null;
+        } else if (req.file) {
+            // Trường hợp 2: Người dùng upload ảnh mới. 
+            // Nếu tên file cũ khác tên mới, xóa file cũ để tránh rác (Multer tự ghi đè nếu trùng tên)
+            if (activity.Anh && activity.Anh !== req.file.filename) {
+                const oldPath = path.join(activityUploadPath, activity.Anh);
+                if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+            }
+            filenameToSave = req.file.filename;
         }
 
         const activityData = {
@@ -262,7 +362,7 @@ app.put('/api/activities/:id', uploadActivity.single('Anh'), async (req, res) =>
             Phong: req.body.Phong,
             Toa: req.body.Toa,
             MoTa: req.body.MoTa,
-            Anh: req.file ? `../assets/images/pages/hoat-dong/${req.file.filename}` : activity.Anh
+            Anh: filenameToSave
         };
         console.log('Activity data to update:', activityData);
         
@@ -278,7 +378,18 @@ app.put('/api/activities/:id', uploadActivity.single('Anh'), async (req, res) =>
 app.delete('/api/activities/:id', async (req, res) => {
     try {
         const id = req.params.id;
+        // 1. Lấy thông tin hoạt động trước khi xóa để lấy tên file ảnh
+        const activity = await getActivityById(id);
+        
+        // 2. Xóa trong Database
         await deleteActivity(id);
+
+        // 3. Xóa file vật lý nếu có
+        if (activity && activity.Anh) {
+            const imagePath = path.join(activityUploadPath, activity.Anh);
+            if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+        }
+
         res.status(200).json({ message: "Xóa hoạt động thành công" });
     } catch (error) {
         console.error("Lỗi API DELETE /api/activities/:id:", error);
