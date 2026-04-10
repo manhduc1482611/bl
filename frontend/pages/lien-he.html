@@ -92,46 +92,6 @@
                     </div>
                 </div>
 
-                <!-- Contact Form -->
-                <div class="contact-form-section">
-                    <div class="form-header">
-                        <h2><i class="fas fa-envelope-open"></i> Gửi Tin Nhắn</h2>
-                    </div>
-
-                    <form class="contact-form" id="contactForm">
-                        <div class="form-group">
-                            <label for="name">Họ và Tên <span class="required">*</span></label>
-                            <input type="text" id="name" name="name" placeholder="Nhập họ và tên của bạn" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="Nhập địa chỉ email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Số Điện Thoại</label>
-                            <input type="tel" id="phone" name="phone" placeholder="Nhập số điện thoại">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="subject">Tiêu Đề <span class="required">*</span></label>
-                            <input type="text" id="subject" name="subject" placeholder="Tiêu đề tin nhắn" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message">Nội Dung <span class="required">*</span></label>
-                            <textarea id="message" name="message" rows="6" placeholder="Nhập nội dung tin nhắn của bạn" required></textarea>
-                        </div>
-
-                        <button type="submit" class="btn-submit">
-                            <i class="fas fa-paper-plane"></i> Gửi Tin Nhắn
-                        </button>
-                    </form>
-
-                    <div id="formMessage" class="form-message" style="display: none;"></div>
-                </div>
-
             </section>
 
         </div>
@@ -142,33 +102,6 @@
     <script>
         loadHeader('..', 'lien-he')
         loadFooter('..')
-
-        // Simple form handling
-        const contactForm = document.getElementById('contactForm');
-        const formMessage = document.getElementById('formMessage');
-
-        if (contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Get form data
-                const formData = new FormData(this);
-                const data = Object.fromEntries(formData);
-                
-                // Show success message
-                formMessage.style.display = 'block';
-                formMessage.className = 'form-message success';
-                formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Cảm ơn! Tin nhắn của bạn đã được gửi thành công.';
-                
-                // Reset form
-                this.reset();
-                
-                // Hide message after 5 seconds
-                setTimeout(() => {
-                    formMessage.style.display = 'none';
-                }, 5000);
-            });
-        }
     </script>
 
 </body>

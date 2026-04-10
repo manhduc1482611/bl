@@ -126,16 +126,6 @@ function displayActivityItems(activities) {
     if (!activityContainer) return;
 
     activityContainer.innerHTML = activities.map(item => createActivityCardHTML(item)).join('');
-    
-    // Add click handlers to load detail page
-    document.querySelectorAll('.activity-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            const id = this.getAttribute('data-id');
-            if (id) {
-                window.location.href = `chi-tiet-hoat-dong.html?id=${id}`;
-            }
-        });
-    });
 }
 
 /**
@@ -160,6 +150,7 @@ function createActivityCardHTML(activity) {
     const formattedDate = formatDate(timeString);
     const phong = activity.Phong || '';
     const toa = activity.tenToa || '';
+    const toaId = activity.Toa || ''; // ID của tòa nhà (Node ID) để truyền sang bản đồ
 
     return `
         <div class="activity-card" data-id="${id}">
@@ -168,13 +159,15 @@ function createActivityCardHTML(activity) {
             </div>
             <div class="activity-content">
                 <span class="activity-date"><i class="far fa-calendar-alt"></i> ${formattedDate}</span>
-                <h3><a href="chi-tiet-hoat-dong.html?id=${id}">${title}</a></h3>
+                <h3>${title}</h3>
                 <div class="activity-info">
                     ${phong ? `<span class="info-item"><i class="fas fa-door-open"></i> Phòng: ${phong}</span>` : ''}
-                    ${toa ? `<span class="info-item"><i class="fas fa-building"></i> Tòa: ${toa}</span>` : ''}
+                    ${toa ? `<span class="info-item"><i class="fas fa-map-marker-alt"></i> Địa điểm: ${toa}</span>` : ''}
                 </div>
                 <p>${contentPreview}</p>
-                <a href="chi-tiet-hoat-dong.html?id=${id}" class="read-more">Xem chi tiết <i class="fas fa-arrow-right"></i></a>
+                <a href="ban-do/tim-duong.html?to=${toaId}" class="read-more" style="background: #f39c12; color: #003478; padding: 10px 15px; border-radius: 6px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-map-marked-alt"></i> Xem vị trí trên bản đồ
+                </a>
             </div>
         </div>
     `;

@@ -53,7 +53,7 @@
                         <th>Tên hoạt động</th>
                         <th>Thời gian</th>
                         <th>Phòng</th>
-                        <th>Tòa</th>
+                        <th>Địa điểm</th>
                         <th width="100">Thao tác</th>
                     </tr>
                 </thead>
@@ -104,10 +104,10 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tòa nhà:</label>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Địa điểm:</label>
                     <select id="edit-toa" required
                         style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        <option value="">-- Chọn tòa nhà --</option>
+                        <option value="">-- Chọn địa điểm --</option>
                     </select>
                 </div>
 
@@ -162,7 +162,56 @@
         if (!currentUser || currentUser.acc_type !== 'admin_web') {
             window.location.href = '../dangnhap.html';
         }
-        initializeActivityAdmin();
+        // Khởi tạo trang và nạp danh sách địa điểm đồng bộ với trang Tìm đường
+        (async () => {
+            await populateLocationDropdown();
+            if (typeof initializeActivityAdmin === 'function') {
+                initializeActivityAdmin();
+            }
+        })();
+
+        /**
+         * Nạp danh sách địa điểm bao gồm Tòa nhà và Phòng cụ thể
+         * Logic đồng bộ với thanh tìm kiếm của trang Tìm đường
+         */
+        async function populateLocationDropdown() {
+            const select = document.getElementById('edit-toa');
+            if (!select) return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/map-data');
+                const data = await response.json();
+                
+                const nodes = data.nodes || [];
+                const locations = data.locations || [];
+
+                let html = '<option value="">-- Chọn địa điểm --</option>';
+                
+                // 1. Nhóm các Tòa nhà (Dựa trên các node loại 'red')
+                const buildings = nodes.filter(n => (n.node_type || n.type || '').toLowerCase() === 'red');
+                html += '<optgroup label="Tòa nhà (Điểm mốc chính)">';
+                buildings.forEach(b => {
+                    html += `<option value="${b.id}">${b.name || b.id}</option>`;
+                });
+                html += '</optgroup>';
+
+                // 2. Nhóm các Phòng/Vị trí cụ thể (Dựa trên bảng Locations với type = 1)
+                const detailedLocs = locations.filter(loc => String(loc.type) === "1");
+                html += '<optgroup label="Phòng / Vị trí chi tiết">';
+                detailedLocs.forEach(loc => {
+                    let displayName = loc.specific_location || loc.location_code;
+                    if (loc.floor && loc.floor !== "none") displayName += ` - Tầng ${loc.floor}`;
+                    if (loc.building) displayName += ` (${loc.building})`;
+                    
+                    html += `<option value="${loc.node_id}">${displayName}</option>`;
+                });
+                html += '</optgroup>';
+
+                select.innerHTML = html;
+            } catch (err) {
+                console.error("Lỗi khi tải danh sách địa điểm cho dropdown:", err);
+            }
+        }
     </script>
 </body>
 
