@@ -42,17 +42,18 @@
 
 .admin-tabs .tab-item {
     text-decoration: none;
-    color: var(--text-light);
+    color: var(--text-muted);
     padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
+    border-radius: 8px;
+    font-weight: 600;
     transition: all 0.3s ease;
-    background: var(--bg-light);
+    background: transparent;
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 14px;
     font-family: var(--font-family);
+    border: 1px solid transparent;
 }
 
 .admin-tabs .tab-item:hover {
@@ -64,7 +65,8 @@
 .admin-tabs .tab-item.active {
     background: var(--primary-color);
     color: white;
-    box-shadow: 0 4px 6px rgba(0, 52, 120, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 52, 120, 0.25);
+    border-color: var(--primary-dark);
 }
 
 /* Search Container */
@@ -76,9 +78,9 @@
 
 .search-container input {
     width: 100%;
-    padding: 12px 15px 12px 40px;
+    padding: 14px 15px 14px 45px;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 10px;
     font-size: 14px;
     outline: none;
     box-sizing: border-box;
@@ -93,10 +95,10 @@
 
 .search-container i {
     position: absolute;
-    left: 15px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
+    color: var(--primary-color);
 }
 
 #adminSearchResults {
@@ -121,17 +123,68 @@
 .btn-add {
     background: var(--success-color);
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     transition: 0.3s;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-family: var(--font-family);
-    font-size: 14px;
+    font-size: 15px;
+    box-shadow: 0 4px 6px rgba(39, 174, 96, 0.15);
+}
+
+/* Container cho nhóm các nút hành động phía bên phải header */
+.header-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.btn-save-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #e2e8f0;
+    color: #94a3b8;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: not-allowed;
+    font-weight: 700;
+    transition: 0.3s;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.btn-save-all #change-count {
+    background: #e74c3c;
+    color: white;
+    min-width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+    margin-left: 5px;
+}
+
+.btn-save-all.has-changes {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    cursor: pointer;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(0, 52, 120, 0.25);
+}
+
+.btn-save-all.has-changes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 52, 120, 0.3);
 }
 
 .btn-add:hover {
@@ -183,6 +236,23 @@
     transition: background-color 0.2s ease;
 }
 
+.btn-edit {
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-edit:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 4px 8px rgba(0, 52, 120, 0.2);
+}
+
 .td-desc {
     max-width: 300px;
     white-space: nowrap;
@@ -201,7 +271,8 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 52, 120, 0.4);
+    backdrop-filter: blur(4px);
     align-items: center;
     justify-content: center;
 }
@@ -245,9 +316,9 @@
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: var(--font-family);
     font-size: 14px;
     color: var(--text-dark);
@@ -291,11 +362,13 @@
 .status-select.active {
     background-color: var(--status-active-bg);
     color: var(--status-active-color);
+    border-color: #84e1bc;
 }
 
 .status-select.hidden {
-    background-color: var(--bg-light);
-    color: var(--text-muted);
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-color: #fca5a5;
 }
 
 .status-select:focus {
@@ -314,11 +387,11 @@
 }
 
 .modal-actions button {
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     transition: all 0.3s ease;
     font-family: var(--font-family);
     font-size: 14px;
@@ -350,11 +423,38 @@
     background: var(--danger-color);
     color: white;
     margin-right: auto !important;
+    box-shadow: 0 4px 6px rgba(231, 76, 60, 0.15);
 }
 
 #btn-delete-activity:hover {
     background: var(--danger-dark);
-    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.2);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Batch Change List Styles */
+.btn-remove-change {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.btn-remove-change:hover {
+    color: var(--danger-color);
+}
+
+.change-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-light);
 }
 
 /* Image Drop Zone */

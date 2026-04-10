@@ -14,59 +14,64 @@
 /* 1. KÉO SÁT LÊN TRÊN CÙNG */
 .main-content-wrapper {
     text-align: center;
-    padding-top: 5px !important;    
+    padding-top: 5px !important;
     padding-bottom: 20px;
 }
 
 .page-title {
     margin-top: 0 !important;
-    margin-bottom: 10px !important; 
-    font-size: 22px;                
+    margin-bottom: 10px !important;
+    font-size: 22px;
     color: #003478;
     text-transform: uppercase;
-    font-weight: 800; /* Chuẩn hệ thống */
+    font-weight: 800;
+    /* Chuẩn hệ thống */
 }
 
 /* =========================================
    2. KHU VỰC CHỌN ĐIỂM (DÀN HÀNG NGANG CHUẨN)
 ========================================= */
 .controls {
-    margin: 0 auto 15px auto; 
+    margin: 0 auto 15px auto;
     background: white;
-    padding: 15px;       
+    padding: 15px;
     border-radius: 8px;
     border: 1px solid #eee;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    max-width: 900px;    
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    max-width: 900px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;           
-    flex-wrap: wrap;     
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .controls button {
     padding: 10px 20px;
     font-size: 15px;
     border-radius: 5px;
-    background: #003478; /* Chuyển xanh lá thành xanh dương hệ thống */
-    color: white; 
-    border: none; 
-    cursor: pointer; 
+    background: #003478;
+    /* Chuyển xanh lá thành xanh dương hệ thống */
+    color: white;
+    border: none;
+    cursor: pointer;
     font-weight: bold;
-    white-space: nowrap; 
-    height: 42px;        
+    white-space: nowrap;
+    height: 42px;
     transition: 0.3s;
 }
-.controls button:hover { background: #f39c12; }
+
+.controls button:hover {
+    background: #f39c12;
+}
 
 /* CSS CHO THANH TÌM KIẾM TÙY CHỈNH (CUSTOM DROPDOWN) NẰM NGANG */
 .custom-dropdown {
     position: relative;
-    flex: 1;             
-    min-width: 200px;    
+    flex: 1;
+    min-width: 200px;
     font-family: inherit;
-    margin-bottom: 0;    
+    margin-bottom: 0;
 }
 
 .dropdown-header {
@@ -79,7 +84,7 @@
     justify-content: space-between;
     align-items: center;
     color: #444;
-    height: 42px;        
+    height: 42px;
     box-sizing: border-box;
 }
 
@@ -94,8 +99,8 @@
     position: absolute;
     top: 100%;
     left: 0;
-    min-width: 100%;     
-    width: max-content;  
+    min-width: 100%;
+    width: max-content;
     max-width: 450px;
     background: #fff;
     border: 1px solid #ced4da;
@@ -106,8 +111,8 @@
     margin: 4px 0 0 0;
     padding: 0;
     list-style: none;
-    box-shadow: 0 4px 15px rgba(0,52,120,0.1);
-    text-align: left;    
+    box-shadow: 0 4px 15px rgba(0, 52, 120, 0.1);
+    text-align: left;
 }
 
 .dropdown-row {
@@ -128,7 +133,8 @@
 
 .item-name:hover {
     background-color: #f4f7f6;
-    color: #f39c12; /* Cam hệ thống */
+    color: #f39c12;
+    /* Cam hệ thống */
 }
 
 .toggle-arrow {
@@ -141,11 +147,54 @@
     background: #fdfdfd;
 }
 
-.toggle-arrow:hover { background-color: #e9ecef; color: #333; }
+.toggle-arrow:hover {
+    background-color: #e9ecef;
+    color: #333;
+}
 
-.sub-list { list-style: none; margin: 0; padding: 0; background-color: #f8f9fa; }
-.sub-list li { padding: 10px 15px 10px 40px; cursor: pointer; border-bottom: 1px solid #eee; color: #555; font-size: 0.95em; transition: 0.2s;}
-.sub-list li:hover { background-color: #e2e6ea; color: #003478; }
+/* NÚT ĐỔI VỊ TRÍ (SWAP) */
+.btn-swap {
+    width: 42px;
+    height: 42px;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    color: #003478;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.btn-swap:hover {
+    background: #f4f7f6;
+    color: #f39c12;
+    border-color: #f39c12;
+}
+
+.sub-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.sub-list li {
+    padding: 10px 15px 10px 40px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    color: #555;
+    font-size: 0.95em;
+    transition: 0.2s;
+}
+
+.sub-list li:hover {
+    background-color: #e2e6ea;
+    color: #003478;
+}
 
 /* =========================================
    3. KHUNG VIDEO (BỐ CỤC NGANG) & BẢN ĐỒ THU NHỎ
@@ -153,9 +202,9 @@
 .video-container {
     max-width: 1000px;
     width: 100%;
-    margin: 0 auto 15px auto; 
+    margin: 0 auto 15px auto;
     background: #fff;
-    padding: 15px;            
+    padding: 15px;
     border-radius: 8px;
     border: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -163,7 +212,7 @@
 
 .video-title {
     color: #003478;
-    margin: 0 0 10px;         
+    margin: 0 0 10px;
     font-size: 16px;
     font-weight: bold;
     text-transform: uppercase;
@@ -173,7 +222,8 @@
     display: flex;
     align-items: flex-start;
     gap: 20px;
-    justify-content: center; /* Căn giữa nội dung video và thanh tốc độ */
+    justify-content: center;
+    /* Căn giữa nội dung video và thanh tốc độ */
     flex-wrap: wrap;
 }
 
@@ -182,7 +232,8 @@
     min-width: 280px;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Khoảng cách giữa video và nút điều khiển */
+    gap: 10px;
+    /* Khoảng cách giữa video và nút điều khiển */
 }
 
 #map-container {
@@ -219,11 +270,11 @@
     border-radius: 50% !important;
     overflow: hidden;
     z-index: 99 !important;
-    
+
     /* Game-style framing */
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
     border: 3px solid #00d4ff;
-    box-shadow: 
+    box-shadow:
         0 0 25px rgba(0, 212, 255, 0.8),
         0 0 50px rgba(0, 212, 255, 0.4),
         inset 0 0 25px rgba(255, 255, 255, 0.08),
@@ -250,6 +301,7 @@
     0% {
         transform: translate(-50%, -50%) rotate(0deg);
     }
+
     100% {
         transform: translate(-50%, -50%) rotate(360deg);
     }
@@ -276,7 +328,7 @@
         left: 15px !important;
         border: 2.5px solid #00d4ff !important;
     }
-    
+
     .video-map-area.video-playing #map-container::before {
         border-width: 1.5px;
     }
@@ -290,13 +342,13 @@
         top: 12px !important;
         left: 12px !important;
         border: 2.5px solid #00d4ff !important;
-        box-shadow: 
+        box-shadow:
             0 0 20px rgba(0, 212, 255, 0.7),
             0 0 40px rgba(0, 212, 255, 0.35),
             inset 0 0 20px rgba(255, 255, 255, 0.07),
             0 10px 35px rgba(0, 0, 0, 0.45) !important;
     }
-    
+
     .video-map-area.video-playing #map-container::before {
         border-width: 1.2px;
     }
@@ -310,13 +362,13 @@
         top: 10px !important;
         left: 10px !important;
         border: 2px solid #00d4ff !important;
-        box-shadow: 
+        box-shadow:
             0 0 18px rgba(0, 212, 255, 0.65),
             0 0 35px rgba(0, 212, 255, 0.3),
             inset 0 0 18px rgba(255, 255, 255, 0.06),
             0 8px 30px rgba(0, 0, 0, 0.4) !important;
     }
-    
+
     .video-map-area.video-playing #map-container::before {
         border-width: 0.8px;
     }
@@ -352,22 +404,46 @@
 .video-wrapper {
     position: relative;
     width: 100%;
-    height: 400px; 
+    height: 400px;
     background: #000;
     border-radius: 4px;
     overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.video-box { position: relative; width: 100%; height: 100%; }
-.guide-video { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+.video-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.guide-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+}
 
 .instruction-overlay {
-    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background-color: rgba(0, 52, 120, 0.85); /* Tone xanh đậm */
-    color: #fff; padding: 10px 25px; border-radius: 30px; font-size: 18px;
-    font-weight: bold; text-align: center; z-index: 10; pointer-events: none;  
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.3s ease; 
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 52, 120, 0.85);
+    /* Tone xanh đậm */
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
 }
 
 /* THIẾT KẾ KHU VỰC NÚT TẠM DỪNG / QUAY LẠI */
@@ -409,111 +485,385 @@
 
 /* 5. CỘT TỐC ĐỘ BÊN PHẢI */
 .speed-controls {
-    display: flex; flex-direction: column; gap: 5px; background: #f9f9f9;
-    padding: 10px; border-radius: 4px; border: 1px solid #eee; width: 80px; flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    width: 80px;
+    flex-shrink: 0;
 }
-.speed-controls span { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 3px; text-align: center; }
+
+.speed-controls span {
+    font-size: 13px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 3px;
+    text-align: center;
+}
+
 .speed-controls button {
-    padding: 6px 0; margin: 0; width: 100%; font-size: 13px; color: #333;
-    background: #fff; transition: all 0.2s; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;
+    padding: 6px 0;
+    margin: 0;
+    width: 100%;
+    font-size: 13px;
+    color: #333;
+    background: #fff;
+    transition: all 0.2s;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
 }
-.speed-controls button:hover { background: #f39c12; color: white; border-color: #f39c12; }
-.speed-controls button.active-speed { background: #003478; color: white; border-color: #003478; }
+
+.speed-controls button:hover {
+    background: #f39c12;
+    color: white;
+    border-color: #f39c12;
+}
+
+.speed-controls button.active-speed {
+    background: #003478;
+    color: white;
+    border-color: #003478;
+}
 
 /* 6. BẢN ĐỒ */
-.map-box { position: relative; display: inline-block; border: 2px solid #003478; width: 100%; }
-.map-box img { width: 100%; display: block; }
-.map-box canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.map-box {
+    position: relative;
+    display: inline-block;
+    border: 2px solid #003478;
+    width: 100%;
+}
+
+.map-box img {
+    width: 100%;
+    display: block;
+}
+
+.map-box canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
 
 /* =========================================
    GIAO DIỆN THANH TÌM KIẾM ĐỊA ĐIỂM BÊN TRÊN
 ========================================= */
-.search-box-wrapper { position: relative; max-width: 500px; margin: 0 auto 30px; }
+.search-box-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto 30px;
+}
 
 #searchInput {
-    width: 100%; padding: 14px 20px 14px 45px; border: 2px solid #e9ecef;
-    border-radius: 30px; font-size: 15px; outline: none; transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03); box-sizing: border-box;
+    width: 100%;
+    padding: 14px 20px 14px 45px;
+    border: 2px solid #e9ecef;
+    border-radius: 30px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    box-sizing: border-box;
 }
-#searchInput:focus { border-color: #003478; box-shadow: 0 4px 20px rgba(0, 52, 120, 0.15); }
-.search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 18px; }
+
+#searchInput:focus {
+    border-color: #003478;
+    box-shadow: 0 4px 20px rgba(0, 52, 120, 0.15);
+}
+
+.search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 18px;
+}
 
 .search-results-list {
-    position: absolute; top: 100%; left: 0; right: 0; background: #fff;
-    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,52,120,0.1); margin-top: 8px;
-    padding: 8px 0; list-style: none; max-height: 250px; overflow-y: auto; z-index: 999; display: none; text-align: left;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 52, 120, 0.1);
+    margin-top: 8px;
+    padding: 8px 0;
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 999;
+    display: none;
+    text-align: left;
 }
-.search-results-list li { padding: 12px 20px; border-bottom: 1px solid #f8f9fa; cursor: pointer; color: #444; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
-.search-results-list li:hover { background: #f4f7f6; color: #003478; padding-left: 25px; }
-.search-results-list li:last-child { border-bottom: none; }
 
-.search-actions { display: flex; gap: 8px; }
-.btn-set-start, .btn-set-end { padding: 6px 12px; font-size: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; }
-.btn-set-start { background: #e9ecef; color: #003478; }
-.btn-set-start:hover { background: #003478; color: #ffffff; }
-.btn-set-end { background: #fdf2e3; color: #f39c12; }
-.btn-set-end:hover { background: #f39c12; color: #ffffff; }
+.search-results-list li {
+    padding: 12px 20px;
+    border-bottom: 1px solid #f8f9fa;
+    cursor: pointer;
+    color: #444;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-.select-flash { box-shadow: 0 0 15px rgba(243, 156, 18, 0.8) !important; border-color: #f39c12 !important; transition: all 0.5s ease; }
+.search-results-list li:hover {
+    background: #f4f7f6;
+    color: #003478;
+    padding-left: 25px;
+}
+
+.search-results-list li:last-child {
+    border-bottom: none;
+}
+
+.search-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-set-start,
+.btn-set-end {
+    padding: 6px 12px;
+    font-size: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.btn-set-start {
+    background: #e9ecef;
+    color: #003478;
+}
+
+.btn-set-start:hover {
+    background: #003478;
+    color: #ffffff;
+}
+
+.btn-set-end {
+    background: #fdf2e3;
+    color: #f39c12;
+}
+
+.btn-set-end:hover {
+    background: #f39c12;
+    color: #ffffff;
+}
+
+.select-flash {
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.8) !important;
+    border-color: #f39c12 !important;
+    transition: all 0.5s ease;
+}
 
 /* =========================================
    GIAO DIỆN THAM QUAN
 ========================================= */
 .tour-prompt-overlay {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.95); padding: 25px 35px; border-radius: 12px; text-align: center;
-    box-shadow: 0 15px 40px rgba(0,52,120,0.2); z-index: 20; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px 35px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0, 52, 120, 0.2);
+    z-index: 20;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.tour-prompt-overlay h4 { margin: 0 0 10px; color: #003478; font-size: 24px; font-weight: 800;}
-.tour-prompt-overlay p { margin: 0 0 20px; color: #444; font-size: 16px; }
-.tour-prompt-btns { display: flex; gap: 10px; justify-content: center; }
-.btn-tour-yes { background: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;}
-.btn-tour-yes:hover { background: #d68910; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3); }
-.btn-tour-no { background: #e9ecef; color: #555; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: 0.3s;}
-.btn-tour-no:hover { background: #ced4da; }
+
+.tour-prompt-overlay h4 {
+    margin: 0 0 10px;
+    color: #003478;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.tour-prompt-overlay p {
+    margin: 0 0 20px;
+    color: #444;
+    font-size: 16px;
+}
+
+.tour-prompt-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-tour-yes {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-tour-yes:hover {
+    background: #d68910;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+}
+
+.btn-tour-no {
+    background: #e9ecef;
+    color: #555;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-tour-no:hover {
+    background: #ced4da;
+}
 
 @keyframes popIn {
-    from { transform: translate(-50%, -40%) scale(0.8); opacity: 0; }
-    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    from {
+        transform: translate(-50%, -40%) scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 .tour-module-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 15, 40, 0.85); z-index: 9999;
-    display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
-}
-.tour-module-content {
-    background: #fff; width: 90%; max-width: 800px; border-radius: 20px; overflow: hidden;
-    display: flex; flex-direction: column; position: relative; animation: slideUp 0.5s ease;
-}
-@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.close-tour-modal {
-    position: absolute; top: 15px; right: 20px; font-size: 32px; color: #fff; cursor: pointer;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.6); z-index: 10; transition: 0.3s;
-}
-.close-tour-modal:hover { color: #f39c12; transform: rotate(90deg); }
-
-.tour-video-box { width: 100%; height: 350px; background: #000; position: relative; }
-.tour-video-box video { width: 100%; height: 100%; object-fit: cover; }
-.tour-info-box { padding: 35px; text-align: left; }
-.tour-badge { background: #fdf2e3; color: #f39c12; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
-.tour-info-box h2 { margin: 0 0 15px; color: #003478; font-size: 28px; font-weight: 800;}
-.tour-info-box p { color: #555; line-height: 1.7; font-size: 16px; margin: 0; }
-
-#btnStartJourney { background: #f39c12 !important; color: white; display: none; }
-#btnStartJourney:hover { background: #d68910 !important; }
-
-/* 1. Lớp bao phủ toàn màn hình (Overlay) */
-.guide-popup {
-    display: none; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); 
-    z-index: 999999; 
+    background: rgba(0, 15, 40, 0.85);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.tour-module-content {
+    background: #fff;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-tour-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 32px;
+    color: #fff;
+    cursor: pointer;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+    z-index: 10;
+    transition: 0.3s;
+}
+
+.close-tour-modal:hover {
+    color: #f39c12;
+    transform: rotate(90deg);
+}
+
+.tour-video-box {
+    width: 100%;
+    height: 350px;
+    background: #000;
+    position: relative;
+}
+
+.tour-video-box video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tour-info-box {
+    padding: 35px;
+    text-align: left;
+}
+
+.tour-badge {
+    background: #fdf2e3;
+    color: #f39c12;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.tour-info-box h2 {
+    margin: 0 0 15px;
+    color: #003478;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.tour-info-box p {
+    color: #555;
+    line-height: 1.7;
+    font-size: 16px;
+    margin: 0;
+}
+
+#btnStartJourney {
+    background: #f39c12 !important;
+    color: white;
+    display: none;
+}
+
+#btnStartJourney:hover {
+    background: #d68910 !important;
+}
+
+/* 1. Lớp bao phủ toàn màn hình (Overlay) */
+.guide-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 999999;
     justify-content: center;
     align-items: center;
     animation: fadeIn 0.3s ease-out;
@@ -522,8 +872,8 @@
 /* 2. Khung chứa nội dung (hình ảnh) */
 .popup-content {
     position: relative;
-    max-width: 90%; 
-    max-height: 90vh; 
+    max-width: 90%;
+    max-height: 90vh;
     background: transparent;
     display: flex;
     justify-content: center;
@@ -537,9 +887,9 @@
     height: auto;
     max-width: 100%;
     max-height: 80vh;
-    border-radius: 12px; 
+    border-radius: 12px;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
-    border: 3px solid #fff; 
+    border: 3px solid #fff;
 }
 
 /* 4. Nút đóng (Dấu X) */
@@ -547,7 +897,7 @@
     position: absolute;
     top: -20px;
     right: -20px;
-    background-color: #ff4757; 
+    background-color: #ff4757;
     color: white;
     border: 2px solid #fff;
     border-radius: 50%;
@@ -560,7 +910,7 @@
     justify-content: center;
     align-items: center;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     z-index: 10;
 }
 
@@ -570,8 +920,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* ============================================
@@ -608,7 +963,8 @@
     }
 
     .video-wrapper {
-        height: 280px; /* Phóng to khung video trên điện thoại nhỏ */
+        height: 280px;
+        /* Phóng to khung video trên điện thoại nhỏ */
     }
 
     .speed-controls {
@@ -662,7 +1018,8 @@
         font-size: 14px;
     }
 
-    .btn-tour-yes, .btn-tour-no {
+    .btn-tour-yes,
+    .btn-tour-no {
         padding: 10px 16px;
         font-size: 13px;
     }
@@ -728,13 +1085,15 @@
     }
 
     .video-wrapper {
-        height: 320px; /* Phóng to khung video trên Tablet/Mobile Medium */
+        height: 320px;
+        /* Phóng to khung video trên Tablet/Mobile Medium */
     }
 
     .speed-controls {
         width: 60px;
         padding: 6px;
-        align-self: center; /* Căn giữa thanh tốc độ khi xuống hàng */
+        align-self: center;
+        /* Căn giữa thanh tốc độ khi xuống hàng */
         gap: 2px;
     }
 
@@ -756,7 +1115,8 @@
     .video-layout {
         gap: 10px;
         flex-direction: column;
-        align-items: center; /* Đưa toàn bộ nội dung vào giữa */
+        align-items: center;
+        /* Đưa toàn bộ nội dung vào giữa */
     }
 
     .video-main {
@@ -794,7 +1154,8 @@
         gap: 5px;
     }
 
-    .btn-set-start, .btn-set-end {
+    .btn-set-start,
+    .btn-set-end {
         padding: 5px 8px;
         font-size: 11px;
     }
@@ -816,7 +1177,8 @@
         flex-wrap: wrap;
     }
 
-    .btn-tour-yes, .btn-tour-no {
+    .btn-tour-yes,
+    .btn-tour-no {
         padding: 8px 14px;
         font-size: 12px;
     }
@@ -882,6 +1244,7 @@
         margin-bottom: 15px;
         flex-direction: column;
         align-items: stretch;
+        position: relative;
     }
 
     .controls button {
@@ -901,6 +1264,12 @@
         font-size: 11px;
         height: 34px;
         padding: 6px 8px;
+    }
+
+    .btn-swap {
+        height: 34px;
+        margin: 5px 0;
+        align-self: center;
     }
 
     .dropdown-list {
@@ -952,7 +1321,8 @@
     .video-layout {
         gap: 8px;
         flex-direction: column;
-        align-items: center; /* Căn giữa video trên màn hình nhỏ nhất */
+        align-items: center;
+        /* Căn giữa video trên màn hình nhỏ nhất */
     }
 
     .video-main {
@@ -998,7 +1368,8 @@
         flex-wrap: wrap;
     }
 
-    .btn-set-start, .btn-set-end {
+    .btn-set-start,
+    .btn-set-end {
         padding: 4px 6px;
         font-size: 10px;
     }
@@ -1023,7 +1394,8 @@
         flex-direction: column;
     }
 
-    .btn-tour-yes, .btn-tour-no {
+    .btn-tour-yes,
+    .btn-tour-no {
         padding: 7px 12px;
         font-size: 11px;
         width: 100%;
@@ -1127,14 +1499,15 @@
         font-size: 11px;
     }
 }
-        font-size: 10px;
-    }
 
-    .tour-prompt-overlay h4 {
-        font-size: 14px;
-    }
+font-size: 10px;
+}
 
-    .tour-prompt-overlay p {
-        font-size: 11px;
-    }
+.tour-prompt-overlay h4 {
+    font-size: 14px;
+}
+
+.tour-prompt-overlay p {
+    font-size: 11px;
+}
 }

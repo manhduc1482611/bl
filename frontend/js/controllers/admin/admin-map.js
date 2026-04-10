@@ -4,6 +4,7 @@ let selectedImageFile = null;
 let isImageRemoved = false; // Theo dõi việc xóa ảnh hiện tại
 let buildingNodeMap = {}; // Map từ building -> node_id tự động
 let editingOriginalCode = null; // Lưu mã gốc khi đang chỉnh sửa
+let pendingChanges = []; // Danh sách thay đổi đang chờ lưu
 
 document.addEventListener('DOMContentLoaded', async function () {
     // Kiểm tra quyền truy cập (Người dùng phải đăng nhập và là admin_web)
@@ -33,14 +34,46 @@ document.addEventListener('DOMContentLoaded', async function () {
     const addBtn = document.getElementById('btn-add-location');
     if (addBtn) addBtn.addEventListener('click', openAddModal);
 
+    // Gán sự kiện cho nút Lưu thay đổi đã có sẵn trong HTML
+    const batchSaveBtn = document.getElementById('btn-save-batch');
+    if (batchSaveBtn) {
+        batchSaveBtn.onclick = openConfirmChangesModal;
+        updateBatchBtnUI(); // Cập nhật trạng thái ban đầu
+    }
+
     // Gắn sự kiện cho các nút đóng Modal
     const closeButtons = document.querySelectorAll('.btn-close-modal, .btn-cancel');
     closeButtons.forEach(btn => btn.addEventListener('click', closeEditModal));
 
+    // Khởi tạo Modal xác nhận thay đổi (Batch Confirm Modal)
+    initBatchConfirmModal();
+
     // Đóng modal khi click ra ngoài vùng overlay
-    const modal = document.getElementById('edit-modal');
-    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeEditModal(); });
+    const editModal = document.getElementById('edit-modal');
+    if (editModal) editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+    
+    const confirmModal = document.getElementById('batch-confirm-modal');
+    if (confirmModal) confirmModal.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(); });
 });
+
+function initBatchConfirmModal() {
+    if (document.getElementById('batch-confirm-modal')) return;
+    const modalHtml = `
+        <div id="batch-confirm-modal" class="admin-modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <h3><i class="fas fa-list-check"></i> Xác nhận các thay đổi</h3>
+                <p>Vui lòng kiểm tra lại danh sách các thay đổi trước khi lưu lên hệ thống:</p>
+                <div id="change-list-display" class="change-list-container"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeConfirmModal()">Hủy bỏ</button>
+                    <button type="button" id="btn-execute-save" class="btn-save-all" onclick="executeBatchSave()">
+                        <i class="fas fa-check-circle"></i> Xác nhận lưu tất cả
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
 
 function initImageUpload() {
     const dropZone = document.getElementById('image-drop-zone');
@@ -94,55 +127,105 @@ function removeSelectedImage() {
     if (dropZone) dropZone.style.display = 'block';
 }
 
-async function loadLocationList() {
-    const tableBody = document.getElementById('location-table-body');
+function updateBatchBtnUI() {
+    const btn = document.getElementById('btn-save-batch');
+    const badge = document.getElementById('change-count');
+    if (!btn) return;
     
+    if (pendingChanges.length > 0) {
+        btn.classList.add('has-changes');
+        btn.disabled = false;
+        btn.title = `Bạn có ${pendingChanges.length} thay đổi chưa lưu`;
+    } else {
+        btn.classList.remove('has-changes');
+        btn.disabled = true;
+        btn.title = "Chưa có thay đổi nào để lưu";
+    }
+    
+    if (badge) badge.innerText = pendingChanges.length;
+}
+
+async function loadLocationList() {
     try {
         const response = await fetch(`${API_BASE}/map-data`);
         const data = await response.json();
         allLocations = data.locations || [];
         const nodes = data.nodes || [];
 
-        // Thêm logic sắp xếp (Natural Sort)
+        // Sắp xếp theo mã địa điểm (1_x, 2_x,...) để danh sách hiện theo thứ tự ID tòa nhà
+        // Sử dụng localeCompare với numeric: true để hiểu số tự nhiên (ví dụ: 1_2 đứng trước 1_10)
         allLocations.sort((a, b) => {
             const codeA = a.location_code || '';
             const codeB = b.location_code || '';
-            // Sử dụng localeCompare với numeric: true để hiểu số 10 lớn hơn số 2
             return codeA.localeCompare(codeB, undefined, { numeric: true, sensitivity: 'base' });
         });
 
         populateBuildingDropdown(nodes);
+        renderLocationTable();
+    } catch (error) {
+        console.error("Lỗi tải danh sách:", error);
+        const tableBody = document.getElementById('location-table-body');
+        if (tableBody) tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">Lỗi kết nối Server.</td></tr>';
+    }
+}
+
+function renderLocationTable() {
+    const tableBody = document.getElementById('location-table-body');
+    if (!tableBody) return;
 
         if (allLocations.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Không có dữ liệu.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Không có dữ liệu.</td></tr>';
             return;
         }
 
-        tableBody.innerHTML = allLocations.map(loc => `
-            <tr>
-                <td><strong>${loc.location_code}</strong></td>
-                <td>${loc.building || '-'}</td>
-                <td>${loc.specific_location || '-'}</td>
-                <td>${loc.floor || '-'}</td>
-                <td class="td-desc" title="${loc.description || ''}">${loc.description || '-'}</td>
-                <td>
-                    <select class="status-select ${loc.type == 1 ? 'active' : 'hidden'}" onchange="updateSearchType('${loc.location_code}', this.value, this)">
-                        <option value="1" ${loc.type == 1 ? 'selected' : ''}>Có (Hiện)</option>
-                        <option value="null" ${loc.type == null ? 'selected' : ''}>Không (Ẩn)</option>
-                    </select>
-                </td>
-                <td>
-                    <button class="btn-edit" onclick="openEditModal('${loc.location_code}')">
-                        <i class="fas fa-edit"></i> Sửa
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        let html = '';
+        let lastBuilding = null;
+        let groupIndex = 0; // Đếm thứ tự địa điểm trong cùng một tòa nhà
 
-    } catch (error) {
-        console.error("Lỗi tải danh sách:", error);
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red;">Lỗi kết nối Server.</td></tr>';
-    }
+        allLocations.forEach(loc => {
+            // Chèn dòng tiêu đề nếu chuyển sang tòa nhà mới
+            if (loc.building !== lastBuilding) {
+                lastBuilding = loc.building;
+                groupIndex = 0; // Reset đếm khi sang tòa mới
+                html += `
+                    <tr class="building-group-header">
+                        <td colspan="8" style="background-color: #eef2f7; color: #003478; font-weight: bold; padding: 12px 15px; border-left: 5px solid #003478; font-size: 15px;">
+                            <i class="fas fa-university"></i> TÒA NHÀ: ${lastBuilding || 'KHÁC'}
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // Nút đổi vị trí (mũi tên lên) chỉ hiện từ địa điểm thứ 2 trở đi
+            const swapBtnHtml = groupIndex > 0 ? 
+                `<button class="btn-swap-up" onclick="swapPosition('${loc.location_code}')" title="Đổi vị trí lên trên" style="background: none; border: none; color: #003478; cursor: pointer; padding: 5px;">
+                    <i class="fas fa-arrow-up"></i>
+                </button>` : '';
+
+            html += `
+                <tr class="location-row">
+                    <td style="text-align: center; width: 50px; background: #fafafa;">${swapBtnHtml}</td>
+                    <td><strong>${loc.location_code}</strong></td>
+                    <td>${loc.building || '-'}</td>
+                    <td>${loc.specific_location || '-'}</td>
+                    <td>${loc.floor || '-'}</td>
+                    <td class="td-desc" title="${loc.description || ''}">${loc.description || '-'}</td>
+                    <td>
+                        <select class="status-select ${loc.type == 1 ? 'active' : 'hidden'}" onchange="updateSearchType('${loc.location_code}', this.value, this)">
+                            <option value="1" ${loc.type == 1 ? 'selected' : ''}>Có (Hiện)</option>
+                            <option value="null" ${loc.type == null ? 'selected' : ''}>Không (Ẩn)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn-edit" onclick="openEditModal('${loc.location_code}')">
+                            <i class="fas fa-edit"></i> Sửa
+                        </button>
+                    </td>
+                </tr>
+            `;
+            groupIndex++;
+        });
+        tableBody.innerHTML = html;
 }
 
 // Hàm đổ danh sách tòa nhà vào dropdown
@@ -202,30 +285,25 @@ function updateSelectedNodeId(buildingName) {
     }
 }
 
-async function updateSearchType(code, value, selectEl) {
+function updateSearchType(code, value, selectEl) {
     const typeValue = value === 'null' ? null : parseInt(value);
     
-    // Cập nhật class để đổi màu ngay lập tức trên UI
-    if (selectEl) {
-        selectEl.className = `status-select ${typeValue === 1 ? 'active' : 'hidden'}`;
-    }
+    const loc = allLocations.find(l => l.location_code === code);
+    if (loc) loc.type = typeValue; // Cập nhật local ngay lập tức
+    if (selectEl) selectEl.className = `status-select ${typeValue === 1 ? 'active' : 'hidden'}`;
 
-    try {
-        const response = await fetch(`${API_BASE}/locations/${code}/type`, {
+    pendingChanges.push({
+        type: 'UPDATE_STATUS',
+        code: code,
+        value: typeValue,
+        description: `Đổi trạng thái ${code} thành ${typeValue === 1 ? 'Hiện' : 'Ẩn'}`,
+        execute: () => fetch(`${API_BASE}/locations/${code}/type`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: typeValue })
-        });
-
-        if (response.ok) {
-            showToast(`Đã cập nhật ID ${code}`);
-        } else {
-            alert("Lỗi khi cập nhật trạng thái.");
-        }
-    } catch (error) {
-        console.error("Lỗi API:", error);
-        alert("Không thể kết nối đến máy chủ.");
-    }
+        })
+    });
+    updateBatchBtnUI();
 }
 
 // Hàm mở Modal để thêm địa điểm mới
@@ -309,11 +387,42 @@ function closeEditModal() {
     document.getElementById('edit-modal').style.display = 'none';
 }
 
+/**
+ * Hàm xử lý đổi vị trí địa điểm
+ */
+function swapPosition(code) {
+    const currentIndex = allLocations.findIndex(l => l.location_code === code);
+    if (currentIndex <= 0) return;
+
+    const loc1 = allLocations[currentIndex];
+    const loc2 = allLocations[currentIndex - 1];
+
+    if (loc1.building !== loc2.building) return;
+
+    // Hoán đổi local
+    [allLocations[currentIndex], allLocations[currentIndex - 1]] = [loc2, loc1];
+    renderLocationTable();
+
+    pendingChanges.push({
+        type: 'SWAP',
+        code1: loc1.location_code,
+        code2: loc2.location_code,
+        description: `Đổi vị trí ${loc1.location_code} và ${loc2.location_code}`,
+        execute: () => fetch(`${API_BASE}/locations/swap`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                code1: loc1.location_code, 
+                code2: loc2.location_code 
+            })
+        })
+    });
+    updateBatchBtnUI();
+}
+
 // Hàm gửi yêu cầu lưu thông tin đã sửa lên Server
 async function saveLocation(event) {
     if (event) event.preventDefault();
-
-    const submitBtn = event.target.querySelector('button[type="submit"]');
     const codeInput = document.getElementById('edit-location-code');
     const code = (codeInput?.value || '').trim().toUpperCase(); // Tự động viết hoa mã
     const isEdit = editingOriginalCode !== null;
@@ -327,12 +436,9 @@ async function saveLocation(event) {
     if (!code) return alert('Vui lòng nhập Mã địa điểm.');
     if (!building) return alert('Vui lòng chọn tòa nhà.');
 
-    // Vô hiệu hóa nút lưu để tránh bấm nhiều lần
-    if (submitBtn) submitBtn.disabled = true;
-
     const formData = new FormData();
     formData.append('building', building);
-    formData.append('node_id', nodeId || ''); // Đảm bảo không gửi "undefined"
+    formData.append('node_id', nodeId || '');
     formData.append('specific_location', specificLocation);
     formData.append('floor', floor);
     formData.append('description', description);
@@ -390,23 +496,20 @@ async function deleteLocation() {
         return;
     }
 
-    try {
-        const response = await fetch(`${API_BASE}/locations/${code}`, {
-            method: 'DELETE'
-        });
+    // Xóa local
+    allLocations = allLocations.filter(l => l.location_code !== code);
+    
+    pendingChanges.push({
+        type: 'DELETE',
+        code: code,
+        description: `Xóa địa điểm: ${code}`,
+        execute: () => fetch(`${API_BASE}/locations/${code}`, { method: 'DELETE' })
+    });
 
-        if (response.ok) {
-            showToast(`Đã xóa địa điểm ${code}`);
-            closeEditModal();
-            loadLocationList(); // Tải lại danh sách
-        } else {
-            const errorText = await response.text();
-            alert(`Lỗi khi xóa: ${errorText}`);
-        }
-    } catch (error) {
-        console.error("Lỗi API xóa:", error);
-        alert("Không thể kết nối đến máy chủ.");
-    }
+    renderLocationTable();
+    updateBatchBtnUI();
+    closeEditModal();
+    showToast("Đã ghi nhận yêu cầu xóa");
 }
 
 function showToast(message) {
@@ -460,20 +563,24 @@ if (adminSearchInput && adminSearchResults) {
             rows.forEach(tr => tr.style.display = '');
             return; 
         }
+        
+        // Tạm ẩn các dòng header tòa nhà khi đang tìm kiếm để tránh làm loãng kết quả
+        rows.forEach(row => { if (row.classList.contains('building-group-header')) row.style.display = 'none'; });
 
         let foundAny = false;
         let dedupedResults = new Set(); // Dùng Set để tránh lặp kết quả trong dropdown
 
         rows.forEach(row => {
-            // Bỏ qua dòng thông báo "Đang tải dữ liệu..." hoặc dòng trống
-            if (row.cells.length < 3) return;
+            // Chỉ xử lý các dòng địa điểm thực tế
+            if (row.classList.contains('building-group-header') || row.cells.length < 4) return;
 
-            const locCode = row.cells[0].innerText.toLowerCase();
-            const building = row.cells[1].innerText.toLowerCase();
-            const locName = row.cells[2].innerText.toLowerCase();
+            // Tăng index lên 1 vì đã thêm cột nút bấm ở đầu
+            const locCode = row.cells[1].innerText.toLowerCase();
+            const building = row.cells[2].innerText.toLowerCase();
+            const locName = row.cells[3].innerText.toLowerCase();
             
-            const originalName = row.cells[2].innerText;
-            const originalBuilding = row.cells[1].innerText;
+            const originalName = row.cells[3].innerText;
+            const originalBuilding = row.cells[2].innerText;
             const dropdownKey = `${originalName} - ${originalBuilding}`;
 
             // Kiểm tra xem từ khóa có khớp với Mã, Tòa nhà hoặc Tên địa điểm không
@@ -511,7 +618,7 @@ if (adminSearchInput && adminSearchResults) {
                         rows.forEach(r => {
                             if (r === row) {
                                 r.style.display = '';
-                            } else if (r.cells.length >= 3) {
+                            } else if (r.cells.length >= 4) {
                                 r.style.display = 'none';
                             }
                         });

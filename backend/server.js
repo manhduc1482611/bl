@@ -3,7 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getMapData, getLocationByCode, getNewsData, getNewsById, getAccounts, getActivityData, getActivityById, addActivity, updateActivity, deleteActivity, updateLocationType, addLocation, updateLocation, deleteLocation, addNews, updateNews, deleteNews } = require('./dbOperations');
+const { getMapData, getLocationByCode, getNewsData, getNewsById, getAccounts, getActivityData, getActivityById, addActivity, updateActivity, deleteActivity, updateLocationType, addLocation, updateLocation, deleteLocation, addNews, updateNews, deleteNews, swapLocations } = require('./dbOperations');
 require('dotenv').config();
 
 const app = express();
@@ -333,7 +333,7 @@ app.put('/api/activities/:id', uploadActivity.single('Anh'), async (req, res) =>
         let filenameToSave = activity.Anh;
 
         // Xử lý xóa ảnh cũ hoặc cập nhật ảnh mới
-        if (req.body.removeImage === 'true') {
+        if (req.body.removeImage === 'true' || (req.body.Anh === '' && !req.file)) { // Check for explicit removeImage or empty Anh field with no new file
             // Trường hợp 1: Người dùng chủ động nhấn nút "Xóa ảnh"
             if (activity.Anh) {
                 const oldPath = path.join(activityUploadPath, activity.Anh);
@@ -505,6 +505,39 @@ app.put('/api/locations/:code/type', async (req, res) => {
         res.status(200).json({ message: "Cập nhật thành công" });
     } catch (error) {
         res.status(500).json({ error: "Lỗi Server: Không thể cập nhật trạng thái." });
+    }
+});
+
+// API Endpoint: Hoán đổi vị trí 2 địa điểm
+app.post('/api/locations/swap', async (req, res) => {
+    try {
+        const { code1, code2 } = req.body;
+        if (!code1 || !code2) return res.status(400).json({ error: 'Thiếu mã địa điểm.' });
+
+        const result = await swapLocations(code1, code2);
+
+        // Xử lý đổi tên tệp ảnh vật lý
+        const file1 = result.loc1.image; 
+        const file2 = result.loc2.image;
+        
+        const fullPath1 = file1 ? path.join(uploadPath, file1) : null;
+        const fullPath2 = file2 ? path.join(uploadPath, file2) : null;
+
+        if (fullPath1 && fullPath2 && fs.existsSync(fullPath1) && fs.existsSync(fullPath2)) {
+            const tempPath = path.join(uploadPath, `temp_${Date.now()}_${file1}`);
+            fs.renameSync(fullPath1, tempPath);
+            fs.renameSync(fullPath2, path.join(uploadPath, result.finalImg1));
+            fs.renameSync(tempPath, path.join(uploadPath, result.finalImg2));
+        } else if (fullPath1 && fs.existsSync(fullPath1)) {
+            fs.renameSync(fullPath1, path.join(uploadPath, result.finalImg2));
+        } else if (fullPath2 && fs.existsSync(fullPath2)) {
+            fs.renameSync(fullPath2, path.join(uploadPath, result.finalImg1));
+        }
+
+        res.status(200).json({ message: "Hoán đổi vị trí thành công." });
+    } catch (error) {
+        console.error("Lỗi Swap API:", error);
+        res.status(500).json({ error: error.message });
     }
 });
 

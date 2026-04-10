@@ -304,9 +304,76 @@ window.onload = async () => {
     buildCustomDropdown(startSel, "Chọn điểm xuất phát");
     buildCustomDropdown(endSel, "Chọn điểm đến");
 
+    // Logic thêm nút Đổi vị trí (Swap) cạnh điểm đến
+    const btnSwap = document.createElement('button');
+    btnSwap.id = 'btnSwap';
+    btnSwap.className = 'btn-swap';
+    btnSwap.innerHTML = '<i class="fas fa-exchange-alt fa-rotate-90"></i>';
+    btnSwap.title = 'Đổi vị trí xuất phát và điểm đến';
+    btnSwap.type = 'button';
+
+    const endDropdown = endSel.nextSibling;
+    if (endDropdown) {
+        endDropdown.parentNode.insertBefore(btnSwap, endDropdown.nextSibling);
+    }
+
+    btnSwap.onclick = () => {
+        const tempVal = startSel.value;
+        startSel.value = endSel.value;
+        endSel.value = tempVal;
+
+        // Lấy text hiển thị mới sau khi swap
+        const startText = startSel.options[startSel.selectedIndex]?.text || "Chọn điểm xuất phát";
+        const endText = endSel.options[endSel.selectedIndex]?.text || "Chọn điểm đến";
+
+        // Cập nhật lại tiêu đề của các custom dropdown
+        if (typeof startSel.updateCustomHeader === 'function') startSel.updateCustomHeader(startText);
+        if (typeof endSel.updateCustomHeader === 'function') endSel.updateCustomHeader(endText);
+    };
+
     if (typeof initCanvas === 'function') initCanvas('mapCanvas');
     setSpeed(savedSpeed);
 
+    // Logic để tự động chọn điểm đến từ URL parameter 'to'
+    const urlParams = new URLSearchParams(window.location.search);
+    const destinationParam = urlParams.get('to');
+
+    if (destinationParam) {
+        let foundLocationValue = null; // This will be the 'id' for setSearchAs
+        let foundLocationName = '';    // This will be the 'name' for setSearchAs
+
+        // 1. Thử tìm trong các địa điểm cụ thể (mapData.Locations)
+        for (const key in mapData.Locations) {
+            const loc = mapData.Locations[key];
+            if (loc.location_code === destinationParam) {
+                foundLocationValue = loc.location_code;
+                foundLocationName = loc.specific_location ?? loc.name ?? loc.description ?? loc.location_code;
+                if (loc.floor && loc.floor !== "none") foundLocationName += ` - ${foundLocationName.includes(' - ') ? '' : 'Tầng '}${loc.floor}`;
+                break;
+            }
+        }
+
+        // 2. Nếu không tìm thấy, thử tìm trong các tòa nhà (Node ID)
+        if (!foundLocationValue) {
+            for (const buildingName in uniqueLocations) {
+                const nodeIds = uniqueLocations[buildingName]; // Mảng các Node ID của tòa nhà
+                if (nodeIds.includes(destinationParam)) {
+                    foundLocationValue = nodeIds.join(','); // Giá trị cho dropdown là chuỗi các Node ID
+                    foundLocationName = buildingName;
+                    break;
+                }
+            }
+        }
+
+        if (foundLocationValue && foundLocationName) {
+            window.setSearchAs('end', foundLocationValue, foundLocationName, { stopPropagation: () => {} });
+            const endDropdownHeader = endSel.nextSibling.querySelector('.dropdown-header');
+            if (endDropdownHeader) {
+                endDropdownHeader.classList.add('select-flash');
+                setTimeout(() => { endDropdownHeader.classList.remove('select-flash'); }, 1500);
+            }
+        }
+    }
     videoEl.onloadeddata = () => {
         videoEl.playbackRate = savedSpeed;
         videoEl.play().catch(() => { });

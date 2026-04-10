@@ -382,6 +382,62 @@ async function deleteActivity(id) {
     }
 }
 
+/**
+ * Hoán đổi dữ liệu giữa hai mã địa điểm
+ */
+async function swapLocations(code1, code2) {
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // 1. Lấy dữ liệu hiện tại của 2 địa điểm
+        const [rows] = await connection.query(
+            'SELECT * FROM Locations WHERE location_code IN (?, ?)',
+            [code1, code2]
+        );
+
+        if (rows.length < 2) throw new Error('Không tìm thấy đủ 2 địa điểm để hoán đổi');
+
+        const loc1 = rows.find(r => r.location_code === code1);
+        const loc2 = rows.find(r => r.location_code === code2);
+
+        // 2. Các trường cần hoán đổi (ngoại trừ location_code)
+        const fields = ['node_id', 'building', 'specific_location', 'floor', 'description', 'type', 'image'];
+        
+        const buildUpdate = (targetCode, sourceData) => {
+            const setClause = fields.map(f => `${f} = ?`).join(', ');
+            const values = fields.map(f => sourceData[f]).concat([targetCode]);
+            return { sql: `UPDATE Locations SET ${setClause} WHERE location_code = ?`, values };
+        };
+
+        const u1 = buildUpdate(code1, loc2);
+        const u2 = buildUpdate(code2, loc1);
+
+        await connection.query(u1.sql, u1.values);
+        await connection.query(u2.sql, u2.values);
+
+        // 3. Cập nhật lại cột 'image' trong DB để khớp với mã mới (giữ nguyên extension)
+        const fixImg = async (code, oldImg) => {
+            if (!oldImg) return null;
+            const ext = oldImg.includes('.') ? oldImg.split('.').pop() : 'jpg';
+            const newName = `${code}.${ext}`;
+            await connection.query('UPDATE Locations SET image = ? WHERE location_code = ?', [newName, code]);
+            return newName;
+        };
+
+        const finalImg1 = await fixImg(code1, loc2.image);
+        const finalImg2 = await fixImg(code2, loc1.image);
+
+        await connection.commit();
+        return { loc1, loc2, finalImg1, finalImg2 };
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = { 
     getMapData, 
     getLocationByCode,
@@ -399,5 +455,6 @@ module.exports = {
     deleteLocation,
     addNews,
     updateNews,
-    deleteNews
+    deleteNews,
+    swapLocations
 };

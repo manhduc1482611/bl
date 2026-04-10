@@ -88,8 +88,6 @@ function loadHeader(rootPath, activePage) {
                 });
             }
         }
-    } else if (authActions) {
-        authActions.innerHTML = `<a href="${rootPath}/pages/dangnhap.html" class="btn-header">Đăng nhập</a>`;
     }
 
     // Xử lý menu mobile

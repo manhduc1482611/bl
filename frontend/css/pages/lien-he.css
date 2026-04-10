@@ -37,8 +37,7 @@
 
 /* Contact Main Section */
 .contact-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: block;
     min-height: 500px;
 }
 
@@ -46,7 +45,7 @@
 .contact-info {
     background: #f8fafc;
     padding: 40px;
-    border-right: 1px solid #edf2f7;
+    border-right: none;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -177,141 +176,6 @@
     box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
 }
 
-/* Contact Form Section */
-.contact-form-section {
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.form-header {
-    margin-bottom: 25px;
-}
-
-.form-header h2 {
-    font-size: 26px;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #003478;
-    margin: 0 0 15px 0;
-    padding-bottom: 0;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.form-header h2 i {
-    color: #f39c12;
-    font-size: 26px;
-}
-
-/* Contact Form */
-.contact-form {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-size: 13px;
-    font-weight: 700;
-    color: #003478;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-}
-
-.required {
-    color: #e74c3c;
-}
-
-.form-group input,
-.form-group textarea {
-    padding: 12px 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #f39c12;
-    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 120px;
-}
-
-/* Submit Button */
-.btn-submit {
-    padding: 14px 30px;
-    background: linear-gradient(135deg, #003478 0%, #004a9d 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 52, 120, 0.2);
-}
-
-.btn-submit:active {
-    transform: translateY(0);
-}
-
-/* Form Message */
-.form-message {
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.form-message.success {
-    background: #def7ec;
-    color: #03543f;
-    border-left: 4px solid #27ae60;
-}
-
-.form-message.error {
-    background: #fdeeee;
-    color: #5a1f1f;
-    border-left: 4px solid #e74c3c;
-}
-
-.form-message i {
-    font-size: 18px;
-}
-
 /* =====================================================
    RESPONSIVE DESIGN (Tablet)
 ===================================================== */
@@ -327,11 +191,6 @@
 
     .contact-info {
         border-right: none;
-        border-bottom: 1px solid #edf2f7;
-        padding: 30px;
-    }
-
-    .contact-form-section {
         padding: 30px;
     }
 
@@ -399,33 +258,6 @@
         width: 36px;
         height: 36px;
         font-size: 16px;
-    }
-
-    .contact-form-section {
-        padding: 25px 15px;
-    }
-
-    .form-header h2 {
-        font-size: 18px;
-    }
-
-    .form-group label {
-        font-size: 12px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-        padding: 10px 12px;
-        font-size: 16px;
-    }
-
-    .form-group textarea {
-        min-height: 100px;
-    }
-
-    .btn-submit {
-        padding: 12px 20px;
-        font-size: 13px;
     }
 
     .map-container {
